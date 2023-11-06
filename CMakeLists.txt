@@ -2,13 +2,18 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Las VERSION 1.0)
 
-add_executable(las src/main.cpp
-                   src/commands/CommandExecutor.cpp
-                   src/commands/CutCommand.cpp)
+add_executable(las src/commands/CommandExecutor.cpp
+                   src/commands/CutCommand.cpp
+                   src/commands/common/OSCommandProxy.cpp
+                   src/ui/CmdParser.cpp
+                   src/executors/Las.cpp
+                   src/main.cpp)
 
 target_include_directories(las 
                            PRIVATE
-                           ${PROJECT_SOURCE_DIR}/src/commands)
+                           ${PROJECT_SOURCE_DIR}/src/commands
+                           ${PROJECT_SOURCE_DIR}/src/ui
+                           ${PROJECT_SOURCE_DIR}/src/executors)
 
 #special target created as library for language requirements
 add_library(language_req INTERFACE)

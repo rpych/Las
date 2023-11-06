@@ -1,11 +1,13 @@
 #include <iostream>
-#include "commands/CutCommand.hpp"
+#include <string>
+#include "executors/Las.hpp"
 
-namespace commands = las::commands;
+namespace executors = las::executors;
 
-int main()
+int main(int argc, const char* argv[])
 {
-  commands::CutCommand cutCommand{};
   std::cout<<"Hello from LAS (Log, Analyze and Share system) app"<<std::endl;
+  executors::Las las(argc);
+  las.run(argv);
   return 0;
 }

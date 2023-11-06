@@ -1,10 +1,16 @@
 #pragma once
 #include <memory>
 #include "ICommand.hpp"
-#include "ICommandExecutor.hpp"
 
 namespace las::commands
 {
+
+class ICommandExecutor
+{
+public:
+  virtual void execute() = 0;
+  virtual ~ICommandExecutor() = default;
+};
 
 class CommandExecutor: public ICommandExecutor
 {

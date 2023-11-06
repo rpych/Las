@@ -1,5 +1,5 @@
 #pragma once
-#include "ICommand.hpp" 
+#include "ICommand.hpp"
 
 namespace las::commands
 {
