@@ -2,7 +2,13 @@
 #include <string>
 #include <memory>
 #include "../ui/CmdParser.hpp"
+#include "../commands/CommandExecutor.hpp"
+#include "../commands/diff/DiffCommand.hpp"
 
+// namespace las::commands
+// {
+//   class ICommandExecutor;
+// }
 
 namespace las::executors
 {
@@ -21,5 +27,6 @@ public:
   void run(char const* args[]) override;
 private:
   std::unique_ptr<las::ui::ICmdParser> parser;
+  std::unique_ptr<las::commands::ICommandExecutor> cmdExecutor;
 };
 }
