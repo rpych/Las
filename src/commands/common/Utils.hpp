@@ -1,7 +1,9 @@
 #pragma once
 #include <map>
 #include <set>
+#include <vector>
 #include <utility>
+#include <sstream>
 
 namespace las::commands::common
 {
@@ -39,5 +41,19 @@ static std::map<LasCmd, std::set<LasCmdOpts>> predefineOpts()
 
 static std::map<LasCmd, std::set<LasCmdOpts>> availableOpts {predefineOpts()};
 
+
+inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view filenamesBundle)
+{
+  std::stringstream filenamesStream{};
+  filenamesStream << filenamesBundle;
+  std::vector<std::string> filenames;
+  while(filenamesStream)
+  {
+    std::string filename{};
+    filenamesStream >> filename;
+    if(not filename.empty()) { filenames.push_back(filename); }
+  }
+  return filenames;
+}
 
 }

@@ -25,6 +25,7 @@ public:
   void executeOsCommand(T command) override;
   std::string& getOsCommandResult() override;
 private:
+  void clearOsCommand();
   std::map<T, std::string> const initAllowedOsCommands();
   std::map<T, std::string> const& getAllowedOsCommands();
   std::map<T, std::string> const allowedOsCommands{};

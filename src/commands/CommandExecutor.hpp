@@ -1,13 +1,6 @@
 #pragma once
 #include <memory>
 #include "ICommand.hpp"
-#include "common/OSCommandProxy.hpp"
-
-// namespace las::commands::common
-// {
-//   class AOSCommandProxy<GitCmd>;
-//   enum class GitCmd;
-// }
 
 namespace las::commands
 {
@@ -28,7 +21,6 @@ public:
 
 private:
   std::unique_ptr<ICommand> command;
-  std::unique_ptr<common::AOSCommandProxy<common::GitCmd>> osCommandProxy;
 };
 
 }
