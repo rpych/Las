@@ -1,6 +1,7 @@
 #pragma once
 #include "common/OSCommandProxy.hpp"
 #include "common/FileDiffParser.hpp"
+#include <memory>
 
 
 namespace las::commands

@@ -46,7 +46,7 @@ inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view
 {
   std::stringstream filenamesStream{};
   filenamesStream << filenamesBundle;
-  std::vector<std::string> filenames;
+  std::vector<std::string> filenames{};
   while(filenamesStream)
   {
     std::string filename{};

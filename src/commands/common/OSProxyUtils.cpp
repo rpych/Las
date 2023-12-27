@@ -1,5 +1,10 @@
 #include "OSProxyUtils.hpp"
 #include <iostream>
+#include <fstream>
+#include <memory>
+#include <array>
+#include <vector>
+#include <stdio.h>
 
 namespace las::commands::common
 {
@@ -15,6 +20,16 @@ void saveCommandResult(char const* cmd, std::string& result)
     std::cout<<line.data();
   }
   std::cout<<"SIZE of the output string: "<<result.size()<<", length: "<<result.length()<<std::endl;
+}
+
+void readFileContent(std::stringstream& contentStream, std::string const& filename)
+{
+  std::ifstream fileStream{filename};
+  if(fileStream)
+  {
+    contentStream << fileStream.rdbuf();
+    fileStream.close();
+  }
 }
 
 }
