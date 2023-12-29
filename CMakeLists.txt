@@ -7,7 +7,9 @@ add_executable(las src/commands/common/OSProxyUtils.cpp
                    src/commands/CutCommand.cpp
                    src/commands/diff/DiffCommand.cpp
                    src/commands/common/OSCommandProxy.cpp
-                   src/commands/common/FileDiffParser.cpp
+                   src/commands/common/parsers/HunksParser.cpp
+                   src/commands/common/parsers/FileParser.cpp
+                   src/commands/common/parsers/DiffParser.cpp
                    src/ui/CmdParser.cpp
                    src/executors/Las.cpp
                    src/main.cpp)
@@ -16,11 +18,12 @@ target_include_directories(las
                            PRIVATE
                            ${PROJECT_SOURCE_DIR}/src/commands
                            ${PROJECT_SOURCE_DIR}/src/commands/common
-                           ${PROJECT_SOURCE_DIR}/src/commands/common/ioHandlers
+                           ${PROJECT_SOURCE_DIR}/src/commands/common/parsers
                            ${PROJECT_SOURCE_DIR}/src/commands/common/osProxy
                            ${PROJECT_SOURCE_DIR}/src/commands/diff
                            ${PROJECT_SOURCE_DIR}/src/ui
-                           ${PROJECT_SOURCE_DIR}/src/executors)
+                           ${PROJECT_SOURCE_DIR}/src/executors
+                           ${PROJECT_SOURCE_DIR}/src)
 
 #special target created as library for language requirements
 add_library(language_req INTERFACE)

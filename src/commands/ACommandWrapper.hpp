@@ -1,6 +1,6 @@
 #pragma once
 #include "common/OSCommandProxy.hpp"
-#include "common/FileDiffParser.hpp"
+#include "common/parsers/FileParser.hpp"
 #include <memory>
 
 
@@ -14,10 +14,10 @@ public:
 
 protected:
   ACommandWrapper(): osCommandProxy{std::make_unique<common::OSCommandProxy<common::GitCmd>>()},
-                     fileDiffParser{std::make_unique<common::FileDiffParser>()} {}
+                     fileParser{std::make_unique<common::FileParser>()} {}
 
   std::unique_ptr<common::AOSCommandProxy<common::GitCmd>> osCommandProxy;
-  std::unique_ptr<common::AFileDiffParser> fileDiffParser;
+  std::unique_ptr<common::AFileParser> fileParser;
 };
 
 

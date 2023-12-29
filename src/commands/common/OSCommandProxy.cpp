@@ -8,8 +8,8 @@ std::map<GitCmd, std::string> const OSCommandProxy<GitCmd>::initAllowedOsCommand
 {
   using namespace std::string_literals;
   std::map<GitCmd, std::string> osCommands;
-  osCommands.emplace(GitCmd::GIT_STATUS, "git diff --name-only "s);
-  osCommands.emplace(GitCmd::GIT_DIFF, "git diff"s);
+  osCommands.emplace(GitCmd::GIT_STATUS, "git diff HEAD --name-only "s);
+  osCommands.emplace(GitCmd::GIT_DIFF, "git diff HEAD"s);
   osCommands.emplace(GitCmd::GIT_STASH_PUSH, "git stash push"s);
   osCommands.emplace(GitCmd::GIT_STASH_POP, "git stash pop"s);
   return osCommands;
