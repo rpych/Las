@@ -18,14 +18,18 @@ void DiffParser::parse(std::string_view content)
     {
       continue;
     }
+    else if (isFileRemoved(line))
+    {
+      if (currentFilename.has_value())
+      {
+        removeFilename(currentFilename.value());
+      }
+      setCurrentFilename(std::nullopt);
+    }
     else if (shouldNewFileBeProcessed(line))
     {
       auto filename {readFilename(line)};
       setCurrentFilename(std::make_optional(filename));
-    }
-    else if (isFileRemoved(line))
-    {
-      setCurrentFilename(std::nullopt);
     }
 
     createDiffHunkIfPossible(line);
@@ -75,9 +79,13 @@ void DiffParser::createDiffHunkIfPossible(std::string_view line)
 
 bool DiffParser::shouldNewFileBeProcessed(std::string_view line)
 {
-  std::string newFileTag{"+++ b/"};
-  auto it = std::search(line.begin(), line.end(), newFileTag.begin(), newFileTag.end());
-  if (it == line.begin()) { return true; }
+  std::string newFileTagA{"--- a/"};
+  auto it1 = std::search(line.begin(), line.end(), newFileTagA.begin(), newFileTagA.end());
+  if (it1 == line.begin()) { return true; }
+
+  std::string newFileTagB{"+++ b/"};
+  auto it2 = std::search(line.begin(), line.end(), newFileTagB.begin(), newFileTagB.end());
+  if (it2 == line.begin()) { return true; }
   return false;
 }
 
@@ -116,6 +124,14 @@ std::string DiffParser::readFilename(std::string_view line)
   auto filenameIt = std::find(line.begin(), line.end(), filenamePred);
   std::string filename {filenameIt+1, line.end()};
   return filename;
+}
+
+void DiffParser::removeFilename(std::string_view f)
+{
+  auto it = std::find(filenames.begin(), filenames.end(), f);
+  if (it != filenames.end()) { 
+    std::cout<<"RPY::removeFilename element removed"<<std::endl;
+    filenames.erase(it); }
 }
 
 }

@@ -13,6 +13,7 @@ void DiffCommand::runAlgorithm()
   std::string const filenamesBundle = getOsCommandResult(common::GitCmd::GIT_STATUS);
   std::string const diffBundle = getOsCommandResult(common::GitCmd::GIT_DIFF);
   fileParser->parse(diffBundle, filenamesBundle);
+  fileWriter->write(std::move(fileParser));
   //next steps of las diff command
 }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <map>
 #include <set>
 #include <vector>
@@ -28,6 +29,15 @@ enum class GitCmd
   GIT_DIFF,
   GIT_STASH_PUSH,
   GIT_STASH_POP
+};
+
+struct DiffHunk
+{
+  uint64_t startLineOrig{};
+  uint32_t numOfLinesOrig{};
+  uint64_t startLineNew{};
+  uint32_t numOfLinesNew{};
+  std::string content{};
 };
 
 static std::map<LasCmd, std::set<LasCmdOpts>> predefineOpts()

@@ -5,7 +5,7 @@
 namespace las::commands::common
 {
 
-FileParser::FileParser(): filenames{}, filesHunks{}, diffParser{std::make_unique<DiffParser>()}
+FileParser::FileParser(): filenames{}, filesHunks{}, diffParser{std::make_unique<DiffParser>(filenames)}
 {}
 
 void FileParser::parse(std::string_view diffBundle, std::string_view filenamesBundle)
@@ -23,11 +23,11 @@ void FileParser::parse(std::string_view diffBundle, std::string_view filenamesBu
 
 void FileParser::parseFileStream(std::stringstream& s, std::string_view filename)
 {
-  std::cout<<"FileParser::parseFileStream"<<std::endl;
-  //^^las begin^^ Rafal
+  std::cout<<"FileParser::parseFileStream filename:"<<filename<<", len: "<<filename.length()<<std::endl;
+  //^^las begin^^
   HunksParser hunksParser{};
-  hunksParser.parseForHunks(s);
-  //^^las end^^                  Pych
+  hunksParser.parseForHunks(s, diffParser->getDiffHunks(std::string{filename}));
+  //^^las end^^
   auto hunks = std::move(hunksParser.getHunks());
   std::cout<<"RPY"<<std::endl;
   std::copy(hunks.begin(), hunks.end(), std::ostream_iterator<HunksParser::LasHunk>(std::cout));

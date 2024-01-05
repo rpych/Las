@@ -3,9 +3,12 @@
 #include <optional>
 #include <stack>
 #include <vector>
+#include <algorithm>
 #include <sstream>
 #include <iostream>
 #include <limits>
+#include <string>
+#include "../Utils.hpp"
 
 
 namespace las::commands::common
@@ -40,10 +43,12 @@ public:
   };
 
   HunksParser() = default;
-  void parseForHunks(std::stringstream& s);
+  void parseForHunks(std::stringstream& s, std::vector<DiffHunk>& diffHunksFromFile);
   std::vector<LasHunk> getHunks() const { return hunks; };
 
 private:
+  void parseLasHunkIndicators(std::string_view line, uint64_t lineNum);
+  void fillDiffHunksContent(std::string_view line, uint64_t lineNum, std::vector<DiffHunk>& diffHunksFromFile);
   std::stack<LasComment> commIndicators;
   std::vector<LasHunk> hunks;
 };

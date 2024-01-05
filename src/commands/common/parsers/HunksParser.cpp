@@ -3,17 +3,27 @@
 namespace las::commands::common
 {
 
-void HunksParser::parseForHunks(std::stringstream& s)
+void HunksParser::parseForHunks(std::stringstream& s, std::vector<DiffHunk>& diffHunksFromFile)
 {
-  auto containsLasIndOpen   = [](std::string_view l) { return l.find("//^^las begin^^") != std::string::npos; };
-  auto containsLasIndClose  = [](std::string_view l) { return l.find("//^^las end^^") != std::string::npos; };
-  auto containsSingleLasInd = [](std::string_view l) { return l.find("//^^las^^") != std::string::npos; };
+  
   uint64_t lineNum{1};
   while(s)
   {
     std::string line{};
     std::getline(s, line);
-    if (containsSingleLasInd(line))
+    parseLasHunkIndicators(line, lineNum);
+    fillDiffHunksContent(line, lineNum, diffHunksFromFile);
+    lineNum++;
+  }
+}
+
+void HunksParser::parseLasHunkIndicators(std::string_view line, uint64_t lineNum)
+{
+  auto containsLasIndOpen   = [](std::string_view l) { return l.find("//^^las begin^^") != std::string::npos; };
+  auto containsLasIndClose  = [](std::string_view l) { return l.find("//^^las end^^") != std::string::npos; };
+  auto containsSingleLasInd = [](std::string_view l) { return l.find("//^^las^^") != std::string::npos; };
+
+  if (containsSingleLasInd(line))
     {
       std::cout<<"parseForHunks::containsSingleLasInd with"<<line<<std::endl;
       hunks.push_back(LasHunk{.isBlockHunk=false, .opComment=LasComment{Comment::OPENING, lineNum}});
@@ -40,7 +50,21 @@ void HunksParser::parseForHunks(std::stringstream& s)
       }
       hunks.push_back(LasHunk{.isBlockHunk=true, .opComment=openingComment, .clComment=std::make_optional(LasComment{Comment::CLOSING, lineNum})});
     }
-    lineNum++;
+}
+
+void HunksParser::fillDiffHunksContent(std::string_view line, uint64_t lineNum, std::vector<DiffHunk>& diffHunksFromFile)
+{
+  auto hunkIt = std::find_if(diffHunksFromFile.begin(), diffHunksFromFile.end(), 
+    [lineNum](auto const hunk)
+    {
+      return (hunk.startLineNew <= lineNum) and (lineNum < (hunk.startLineNew + hunk.numOfLinesNew));
+    });
+
+  if (hunkIt != diffHunksFromFile.end())
+  {
+    auto& hunkContent{(*hunkIt).content};
+    hunkContent += line;
+    std::cout<<"Hunk: "<<hunkContent<<std::endl;
   }
 }
 

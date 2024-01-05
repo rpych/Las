@@ -10,6 +10,9 @@ add_executable(las src/commands/common/OSProxyUtils.cpp
                    src/commands/common/parsers/HunksParser.cpp
                    src/commands/common/parsers/FileParser.cpp
                    src/commands/common/parsers/DiffParser.cpp
+                   src/commands/common/writers/CodeWriterExclude.cpp
+                   src/commands/common/writers/CodeWriterInclude.cpp
+                   src/commands/common/writers/FileWriter.cpp
                    src/ui/CmdParser.cpp
                    src/executors/Las.cpp
                    src/main.cpp)
@@ -19,6 +22,7 @@ target_include_directories(las
                            ${PROJECT_SOURCE_DIR}/src/commands
                            ${PROJECT_SOURCE_DIR}/src/commands/common
                            ${PROJECT_SOURCE_DIR}/src/commands/common/parsers
+                           ${PROJECT_SOURCE_DIR}/src/commands/common/writers
                            ${PROJECT_SOURCE_DIR}/src/commands/common/osProxy
                            ${PROJECT_SOURCE_DIR}/src/commands/diff
                            ${PROJECT_SOURCE_DIR}/src/ui
