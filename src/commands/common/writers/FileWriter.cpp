@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "FileWriter.hpp"
 #include "ACodeWriter.hpp"
 #include "CodeWriterExclude.hpp"
@@ -10,7 +11,13 @@ namespace las::commands::common
 void FileWriter::write(std::unique_ptr<AFileParser> fileParser)
 {
   std::unique_ptr<ACodeWriter> codeWriter{createCodeWriter(option)};
-  codeWriter->write();
+  auto const& filenames{fileParser->getFilenames()};
+  std::for_each(filenames.begin(), filenames.end(), [&codeWriter, &fileParser](auto const& f)
+  {
+    auto const& lasHunks{fileParser->getLasHunksForFile(f)};
+    auto const& diffHunks{fileParser->getDiffHunksForFile(f)};
+    codeWriter->write(lasHunks, diffHunks);
+  });
 }
 
 std::unique_ptr<ACodeWriter> FileWriter::createCodeWriter(LasCmdOpts option)

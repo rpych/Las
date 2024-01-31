@@ -4,9 +4,25 @@
 
 namespace las::commands::common
 {
+using LasHunk = HunksParser::LasHunk;
 
 FileParser::FileParser(): filenames{}, filesHunks{}, diffParser{std::make_unique<DiffParser>(filenames)}
 {}
+
+std::vector<std::string> const& FileParser::getFilenames()
+{
+  return filenames;
+}
+
+std::vector<LasHunk> const& FileParser::getLasHunksForFile(std::string const& filename)
+{
+  return filesHunks.at(filename);
+}
+
+std::vector<DiffHunk> const& FileParser::getDiffHunksForFile(std::string const& filename)
+{
+  return diffParser->getDiffHunks(filename);
+}
 
 void FileParser::parse(std::string_view diffBundle, std::string_view filenamesBundle)
 {

@@ -25,7 +25,7 @@ class DiffParser: public ADiffParser
 public:
   DiffParser(std::vector<std::string>& filenames): filenames(filenames) {};
   void parse(std::string_view content) override;
-  std::vector<DiffHunk>& getDiffHunks(const std::string& filename)
+  std::vector<DiffHunk>& getDiffHunks(std::string const& filename)
   {
     std::cout<<"RPY::getDiffHunks"<<std::endl;
     return diffHunks.at(filename);

@@ -4,7 +4,7 @@
 namespace las::commands::common
 {
 
-void CodeWriterInclude::write()
+void CodeWriterInclude::write(std::vector<LasHunk> const&, std::vector<DiffHunk> const&)
 {
   std::cout<<"RPY::CodeWriterInclude::write"<<std::endl;
 }

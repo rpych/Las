@@ -11,6 +11,7 @@ void HunksParser::parseForHunks(std::stringstream& s, std::vector<DiffHunk>& dif
   {
     std::string line{};
     std::getline(s, line);
+    line += "\n";
     parseLasHunkIndicators(line, lineNum);
     fillDiffHunksContent(line, lineNum, diffHunksFromFile);
     lineNum++;
