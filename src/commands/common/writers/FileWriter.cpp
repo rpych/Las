@@ -2,21 +2,18 @@
 #include "FileWriter.hpp"
 #include "ACodeWriter.hpp"
 #include "CodeWriterExclude.hpp"
-#include "CodeWriterInclude.hpp"
-#include "../parsers/FileParser.hpp"
 
 namespace las::commands::common
 {
 
-void FileWriter::write(std::unique_ptr<AFileParser> fileParser)
+void FileWriter::write(std::unordered_map<std::string, std::vector<LasHunk>>const& filesHunks)
 {
   std::unique_ptr<ACodeWriter> codeWriter{createCodeWriter(option)};
-  auto const& filenames{fileParser->getFilenames()};
-  std::for_each(filenames.begin(), filenames.end(), [&codeWriter, &fileParser](auto const& f)
+  std::for_each(filesHunks.begin(), filesHunks.end(), [&codeWriter](auto const& hunkInfo)
   {
-    auto const& lasHunks{fileParser->getLasHunksForFile(f)};
-    auto const& diffHunks{fileParser->getDiffHunksForFile(f)};
-    codeWriter->write(lasHunks, diffHunks);
+    auto const& [filename, hunk] = hunkInfo;
+    std::cout<<"Filename with hunks:"<<filename<<std::endl;
+    codeWriter->write(filename, hunk);
   });
 }
 
@@ -26,8 +23,6 @@ std::unique_ptr<ACodeWriter> FileWriter::createCodeWriter(LasCmdOpts option)
   {
     case LasCmdOpts::EXCLUDE:
       return std::make_unique<CodeWriterExclude>();
-    case LasCmdOpts::INCLUDE:
-      return std::make_unique<CodeWriterInclude>();
     default:
       return nullptr;
   }

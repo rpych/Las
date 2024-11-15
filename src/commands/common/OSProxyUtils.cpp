@@ -19,7 +19,6 @@ void saveCommandResult(char const* cmd, std::string& result)
     result += line.data();
     std::cout<<line.data();
   }
-  std::cout<<"SIZE of the output string: "<<result.size()<<", length: "<<result.length()<<std::endl;
 }
 
 void readFileContent(std::stringstream& contentStream, std::string const& filename)
@@ -28,7 +27,18 @@ void readFileContent(std::stringstream& contentStream, std::string const& filena
   if(fileStream)
   {
     contentStream << fileStream.rdbuf();
+    contentStream << "\n";
     fileStream.close();
+  }
+}
+
+void writeContentToFile(std::stringstream& contentStream, std::string const& filename)
+{
+  std::ofstream outFileStream{filename};
+  if(outFileStream)
+  {
+    outFileStream << contentStream.str();
+    outFileStream.close();
   }
 }
 

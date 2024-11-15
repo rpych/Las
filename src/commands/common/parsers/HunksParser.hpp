@@ -31,9 +31,14 @@ public:
 
   struct LasHunk
   {
-    bool isBlockHunk{};
+    bool isBlockHunk{}; //TODO: remove
     LasComment opComment{};
     std::optional<LasComment> clComment{std::nullopt};
+    bool contains(uint64_t lineNum) const
+    {
+      if (not clComment.has_value()) { return opComment.line == lineNum; }
+      return lineNum >= opComment.line and lineNum <= clComment.value().line;
+    }
 
     friend std::ostream& operator<<(std::ostream& out, LasHunk const& lh)
     {
@@ -43,12 +48,11 @@ public:
   };
 
   HunksParser() = default;
-  void parseForHunks(std::stringstream& s, std::vector<DiffHunk>& diffHunksFromFile);
+  void parseForHunks(std::stringstream& s);
   std::vector<LasHunk> getHunks() const { return hunks; };
 
 private:
   void parseLasHunkIndicators(std::string_view line, uint64_t lineNum);
-  void fillDiffHunksContent(std::string_view line, uint64_t lineNum, std::vector<DiffHunk>& diffHunksFromFile);
   std::stack<LasComment> commIndicators;
   std::vector<LasHunk> hunks;
 };

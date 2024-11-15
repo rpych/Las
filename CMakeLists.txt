@@ -7,11 +7,9 @@ add_executable(las src/commands/common/OSProxyUtils.cpp
                    src/commands/CutCommand.cpp
                    src/commands/diff/DiffCommand.cpp
                    src/commands/common/OSCommandProxy.cpp
-                   src/commands/common/parsers/HunksParser.cpp
                    src/commands/common/parsers/FileParser.cpp
-                   src/commands/common/parsers/DiffParser.cpp
+                   src/commands/common/parsers/HunksParser.cpp
                    src/commands/common/writers/CodeWriterExclude.cpp
-                   src/commands/common/writers/CodeWriterInclude.cpp
                    src/commands/common/writers/FileWriter.cpp
                    src/ui/CmdParser.cpp
                    src/executors/Las.cpp

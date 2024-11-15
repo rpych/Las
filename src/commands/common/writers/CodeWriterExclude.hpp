@@ -7,7 +7,9 @@ namespace las::commands::common
 class CodeWriterExclude: public ACodeWriter
 {
 public:
-  void write(std::vector<LasHunk> const&, std::vector<DiffHunk> const&) override;
+  void write(std::string const& filename, std::vector<LasHunk> const& lasHunks) override;
+private:
+  void updateFileContent(std::string const& filename, std::vector<LasHunk> const& lasHunks);
 };
 
 

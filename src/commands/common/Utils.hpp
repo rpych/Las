@@ -1,10 +1,15 @@
 #pragma once
 #include <cstdint>
+#include <string>
 #include <map>
 #include <set>
 #include <vector>
 #include <utility>
 #include <sstream>
+
+//temp
+#include <iterator>
+#include <iostream>
 
 namespace las::commands::common
 {
@@ -31,14 +36,13 @@ enum class GitCmd
   GIT_STASH_POP
 };
 
-struct DiffHunk
-{
-  uint64_t startLineOrig{};
-  uint32_t numOfLinesOrig{};
-  uint64_t startLineNew{};
-  uint32_t numOfLinesNew{};
-  std::string content{};
-};
+// struct DiffHunk
+// {
+//   uint64_t startLineOrig{};
+//   uint32_t numOfLinesOrig{};
+//   uint32_t startLineNew{};// TODO: remove
+//   uint32_t numOfLinesNew{};// TODO: remove
+// };
 
 static std::map<LasCmd, std::set<LasCmdOpts>> predefineOpts()
 {
@@ -55,7 +59,7 @@ static std::map<LasCmd, std::set<LasCmdOpts>> availableOpts {predefineOpts()};
 inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view filenamesBundle)
 {
   std::stringstream filenamesStream{};
-  filenamesStream << filenamesBundle;
+  filenamesStream << filenamesBundle;//test2
   std::vector<std::string> filenames{};
   while(filenamesStream)
   {
@@ -63,6 +67,7 @@ inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view
     filenamesStream >> filename;
     if(not filename.empty()) { filenames.push_back(filename); }
   }
+  std::copy(filenames.begin(), filenames.end(), std::ostream_iterator<std::string>(std::cout, ",,"));
   return filenames;
 }
 
