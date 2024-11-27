@@ -12,7 +12,6 @@ void FileWriter::write(std::unordered_map<std::string, std::vector<LasHunk>>cons
   std::for_each(filesHunks.begin(), filesHunks.end(), [&codeWriter](auto const& hunkInfo)
   {
     auto const& [filename, hunk] = hunkInfo;
-    std::cout<<"Filename with hunks:"<<filename<<std::endl;
     codeWriter->write(filename, hunk);
   });
 }

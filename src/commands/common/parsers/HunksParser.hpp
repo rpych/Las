@@ -32,6 +32,7 @@ public:
   struct LasHunk
   {
     bool isBlockHunk{}; //TODO: remove
+    std::string substContent{};
     LasComment opComment{};
     std::optional<LasComment> clComment{std::nullopt};
     bool contains(uint64_t lineNum) const
@@ -43,7 +44,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, LasHunk const& lh)
     {
       auto const clLine = (lh.clComment.has_value()) ? lh.clComment.value().line : std::numeric_limits<uint64_t>::max();
-      return out<<"Opening::line="<<lh.opComment.line<<" closing::line="<<clLine<<std::endl;
+      return out<<"Opening::line="<<lh.opComment.line<<" closing::line="<<clLine<<"\nsubstContent\n"<<lh.substContent<<std::endl;
     }
   };
 
@@ -53,6 +54,7 @@ public:
 
 private:
   void parseLasHunkIndicators(std::string_view line, uint64_t lineNum);
+  bool expectSubstitutionCode{false};
   std::stack<LasComment> commIndicators;
   std::vector<LasHunk> hunks;
 };
