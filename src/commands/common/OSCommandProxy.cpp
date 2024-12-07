@@ -9,9 +9,11 @@ std::map<GitCmd, std::string> const OSCommandProxy<GitCmd>::initAllowedOsCommand
   using namespace std::string_literals;
   std::map<GitCmd, std::string> osCommands;
   osCommands.emplace(GitCmd::GIT_STATUS, "git diff HEAD --name-only "s);
-  osCommands.emplace(GitCmd::GIT_DIFF, "git diff HEAD"s);
-  osCommands.emplace(GitCmd::GIT_STASH_PUSH, "git stash push"s);
+  osCommands.emplace(GitCmd::GIT_DIFF_HEAD, "git diff HEAD"s);
+  osCommands.emplace(GitCmd::GIT_STASH, "git stash"s); //  >/dev/null 2>&1
+  osCommands.emplace(GitCmd::GIT_STASH_APPLY, "git stash apply stash@{0}"s);
   osCommands.emplace(GitCmd::GIT_STASH_POP, "git stash pop"s);
+  osCommands.emplace(GitCmd::GIT_RESET_HARD, "git reset HEAD --hard"s);
   return osCommands;
 }
 
@@ -41,6 +43,16 @@ void OSCommandProxy<T>::executeOsCommand(T command)
   std::string const& s  = static_cast<std::string>(allowedOsCommands.at(command));
   char const* cmdPhrase = s.c_str();
   osUtils::saveCommandResult(cmdPhrase, osCommandOutput);
+}
+
+template<typename T>
+void OSCommandProxy<T>::executeOsCommandNotSave(T command)
+{
+  namespace osUtils = las::commands::common;
+  clearOsCommand();
+  std::string const& s  = static_cast<std::string>(allowedOsCommands.at(command));
+  char const* cmdPhrase = s.c_str();
+  osUtils::executeCommand(cmdPhrase);
 }
 
 

@@ -31,9 +31,11 @@ enum class LasCmdOpts
 enum class GitCmd
 {
   GIT_STATUS,
-  GIT_DIFF,
-  GIT_STASH_PUSH,
-  GIT_STASH_POP
+  GIT_DIFF_HEAD,
+  GIT_STASH,
+  GIT_STASH_APPLY,
+  GIT_STASH_POP,
+  GIT_RESET_HARD
 };
 
 // struct DiffHunk

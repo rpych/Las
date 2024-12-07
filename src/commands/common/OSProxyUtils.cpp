@@ -5,6 +5,7 @@
 #include <array>
 #include <vector>
 #include <stdio.h>
+#include <stdlib.h>
 
 namespace las::commands::common
 {
@@ -19,6 +20,12 @@ void saveCommandResult(char const* cmd, std::string& result)
     result += line.data();
     std::cout<<line.data();
   }
+}
+
+void executeCommand(char const* cmd)
+{
+  std::cout<<"executeCommand: "<<cmd<<std::endl;
+  system(cmd);
 }
 
 void readFileContent(std::stringstream& contentStream, std::string const& filename)
