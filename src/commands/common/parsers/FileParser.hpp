@@ -8,6 +8,7 @@
 #include <iterator>
 #include <iostream>
 #include <unordered_map>
+#include "../Utils.hpp"
 #include "HunksParser.hpp"
 
 namespace las::commands::common
@@ -16,7 +17,7 @@ namespace las::commands::common
 class AFileParser
 {
 public:
-  using LasHunk = HunksParser::LasHunk;
+  //using LasHunk = HunksParser::LasHunk;
   AFileParser() = default;
   virtual ~AFileParser() = default;
   virtual void parse(std::vector<std::string>& filenames) = 0;

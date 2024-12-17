@@ -1,10 +1,10 @@
 #include "FileParser.hpp"
 #include "OSProxyUtils.hpp"
-//#include "Utils.hpp"
+//#include "../Utils.hpp"
 
 namespace las::commands::common
 {
-using LasHunk = HunksParser::LasHunk;
+//using LasHunk = HunksParser::LasHunk;
 
 FileParser::FileParser(): filesHunks{}
 {}
@@ -26,9 +26,10 @@ void FileParser::parseFileStream(std::stringstream& s, std::string_view filename
   HunksParser hunksParser{};
   hunksParser.parseForHunks(s);
   auto hunks = std::move(hunksParser.getHunks());
-  std::copy(hunks.begin(), hunks.end(), std::ostream_iterator<HunksParser::LasHunk>(std::cout));
+  std::copy(hunks.begin(), hunks.end(), std::ostream_iterator<LasHunk>(std::cout));
   if (hunks.size() > 0)
   {
+    std::cout<<"RPY::getHunks>0::"<<std::endl;
     filesHunks.emplace(filename, hunks);
   }
 }

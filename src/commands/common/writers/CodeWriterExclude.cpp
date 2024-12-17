@@ -19,22 +19,23 @@ void CodeWriterExclude::write(std::string const& filename,
 void CodeWriterExclude::updateFileContent(std::string const& filename,
                                           std::vector<LasHunk> const& lasHunks)
 {
-  auto containsLasIndSubstClose = [](std::string_view l) { return l.find("//^^las sub end^^") != std::string::npos; };
   auto lineNum{1};
   std::string line{};
   while(std::getline(inFileContentStream, line))
   {
-    std::cout<<"::LINE to write: "<<line<<"myend"<<std::endl;
     auto matchingLasHunk = getLasHunkContainingLine(lasHunks, lineNum);
     if (not matchingLasHunk)
     {
       line = (lineNum == 1 ? "" : "\n") + line;
       outFileContentStream << line;
     }
-    else if (containsLasIndSubstClose(line) and matchingLasHunk)
+    else if (matchingLasHunk and 
+            (containsLasIndSubstClose(line) or (containsSingleLasInd(line) and not matchingLasHunk->clComment)))
     {
       auto& substitutionContent = matchingLasHunk->substContent;
-      auto substContentUpdated = substitutionContent.substr(0, substitutionContent.length()-1);
+      auto substContentUpdated = (substitutionContent != "") ? substitutionContent.substr(0, (substitutionContent.find_last_not_of("\n") + 1))
+                                                             : substitutionContent;
+      std::cout<<"updateFileContent::substContent:"<<matchingLasHunk->substContent<<",size:"<<matchingLasHunk->substContent.length()<<",substContentUpdated:"<<substContentUpdated<<",size:"<<substContentUpdated.length()<<std::endl;
       outFileContentStream << ((lineNum == 1 ? "" : "\n") + (substContentUpdated));
     }
     lineNum++;

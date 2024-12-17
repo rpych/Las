@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
+#include <algorithm>
 #include <optional>
 #include "../Utils.hpp"
-#include "../parsers/HunksParser.hpp"
+//#include "../parsers/HunksParser.hpp"
 
 namespace las::commands::common
 {
-using LasHunk = HunksParser::LasHunk;
+//using LasHunk = HunksParser::LasHunk;
 inline std::optional<LasHunk> getLasHunkContainingLine(std::vector<LasHunk> const& lasHunks, uint64_t lineNum)
 {
   auto res = std::find_if(lasHunks.begin(), lasHunks.end(), [lineNum](auto const& hunk)
@@ -16,6 +17,14 @@ inline std::optional<LasHunk> getLasHunkContainingLine(std::vector<LasHunk> cons
   return (res != lasHunks.end() ? *res : std::optional<LasHunk>(std::nullopt));
 }
 }
+
+class Baba; //^^las^^ class BaBaDaDa;
+
+struct Raptor{}; //^^las^^  
+//^^las sub begin^^
+
+//trala lala
+//^^las sub end^^
 
 //^^las begin^^
 int fun()
@@ -30,5 +39,4 @@ void substFun()
 {
   std::cout<<"Function comes from substitution LasHunk"<<std::endl;
 }
-
 //^^las sub end^^
