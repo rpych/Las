@@ -5,14 +5,22 @@
 #include <set>
 #include <vector>
 #include <optional>
+#include <memory>
 #include <utility>
 #include <limits>
 #include <sstream>
 #include <iterator>
 #include <iostream>
+#include "../../Const.hpp"
 
 namespace las::commands::common
 {
+
+enum class Language
+{
+  CPP,
+  ELIXIR
+};
 
 enum class LasCmd
 {
@@ -79,6 +87,15 @@ static std::map<LasCmd, std::set<LasCmdOpts>> predefineOpts()
 
 static std::map<LasCmd, std::set<LasCmdOpts>> availableOpts {predefineOpts()};
 
+static std::map<Language, std::shared_ptr<LasLanguage>> predefineLanguages()
+{
+  std::map<Language, std::shared_ptr<LasLanguage>> opts;
+  opts.emplace(Language::CPP, std::make_shared<LasCpp>());
+  return opts;
+}
+
+static std::map<Language, std::shared_ptr<LasLanguage>> availableLanguages {predefineLanguages()};
+
 
 inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view filenamesBundle)
 {
@@ -101,4 +118,26 @@ inline bool containsLasIndClose(std::string_view l) { return l.find("//^^las end
 inline bool containsSingleLasInd(std::string_view l) { return l.find("//^^las^^") != std::string::npos; }
 inline bool containsLasIndSubstOpen(std::string_view l) { return l.find("//^^las sub begin^^") != std::string::npos; }
 inline bool containsLasIndSubstClose(std::string_view l) { return l.find("//^^las sub end^^") != std::string::npos; }
+
+inline std::string const getParsedFileExtension(std::string_view filename)
+{
+  auto const fileExtensionIdx{filename.find_last_of(".")};
+  if (fileExtensionIdx == std::string::npos)
+  {
+    std::cout<<"Error::file without extension!"<<std::endl;
+  }
+  auto const fileExtension{filename.substr(fileExtensionIdx+1)};
+  return static_cast<std::string>(fileExtension);
+}
+
+inline std::shared_ptr<LasLanguage> getLanguage(std::string_view filename)
+{
+  auto const extension{getParsedFileExtension(filename)};
+  if (extension == "cpp" or extension == "hpp")
+  {
+    return availableLanguages.at(Language::CPP);
+  }
+  return std::shared_ptr<LasLanguage>();
+}
+
 }

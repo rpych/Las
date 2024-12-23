@@ -15,7 +15,6 @@ void FileWriter::write(std::unordered_map<std::string, std::vector<LasHunk>>cons
     std::cout<<"FILE WRITER: "<<filename<<std::endl;
     if (filename.find("src/commands/common/writers/WriterUtils.hpp") != std::string::npos)
     {
-      std::cout<<"RAFAL wants to write to FILE!!!!!!!!!!!!!!!!!!!!!!!!!: "<<filename<<std::endl;
       codeWriter->write(filename, hunk);
     }
     

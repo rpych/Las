@@ -2,7 +2,6 @@
 #include <string_view>
 #include <variant>
 #include "../../../Const.hpp"
-//#include "HunksParser.hpp"
 #include "../Utils.hpp"
 
 namespace las::commands::common
@@ -21,38 +20,33 @@ struct HunkSingleEvent{};
 struct HunkSubstBeginEvent{};
 struct HunkSubstEndEvent{};
 
-template<typename LANG>
 class LasParserSmManager
 {
-  //using LasComment = HunksParser::LasComment;
-  //using LasHunk = HunksParser::LasHunk;
   using LasParserState = std::variant<NormalArea, HunkArea, HunkSubstAreaPossible, HunkSubstArea, InvalidArea>;
   using LasHunkEvent   = std::variant<NormalLineEvent, HunkBeginEvent, HunkEndEvent, HunkSingleEvent, HunkSubstBeginEvent, HunkSubstEndEvent>;
 
 public:
-  LasParserSmManager() /*: lpSm(*this)*/ {}
+  LasParserSmManager(std::shared_ptr<LasLanguage> lang) : lang(lang) {}
 
-  //template<typename SM_LANG>
   struct LasParserSm
   {
-    LasParserSm(LasParserSmManager<LANG>& lpSmManager): sm(lpSmManager) {/*std::cout<<"CONSTRUCT:"<<sm.line;*/}
-    LasParserSmManager<LANG>& sm;
+    LasParserSm(LasParserSmManager& lpSmManager): sm(lpSmManager) {}
+    LasParserSmManager& sm;
 
     LasParserState operator()(NormalArea&, NormalLineEvent&)
     {
-      std::cout<<"NormalArea and NormalLineEvent: "<<sm.line;//<<std::endl;
+      std::cout<<"NormalArea and NormalLineEvent: "<<sm.line;
       return NormalArea{};
     }
     LasParserState operator()(NormalArea&, HunkBeginEvent&)
     {
-      std::cout<<"parseForHunks::containsLasIndOpen with "<<sm.line;//<<std::endl;
+      std::cout<<"parseForHunks::containsLasIndOpen with "<<sm.line;
       sm.commIndicators.push(LasComment{Comment::OPENING, sm.lineNum});
       return HunkArea{};
     }
     LasParserState operator()(NormalArea&, HunkSingleEvent&)
     {
-      //std::cout<<"parseForHunks::containsSingleLasInd with "<<sm.line;//<<std::endl;
-      auto const markEndIdx{sm.line.find(LANG::LAS_SINGLE) + LANG::LAS_SINGLE.length()};
+      auto const markEndIdx{sm.line.find(sm.lang->LAS_SINGLE) + sm.lang->LAS_SINGLE.length()};
       auto const linePart{sm.line.substr(markEndIdx)};
       auto startTrimIdx{linePart.find_first_not_of(" \t")};
       auto const leadContent{linePart.substr(startTrimIdx)};
@@ -64,12 +58,12 @@ public:
     }
     LasParserState operator()(HunkArea&, NormalLineEvent&)
     {
-      std::cout<<"HunkArea and NormalLineEvent: "<<sm.line;//<<std::endl;
+      std::cout<<"HunkArea and NormalLineEvent: "<<sm.line;
       return HunkArea{};
     }
     LasParserState operator()(HunkArea&, HunkEndEvent&)
     {
-      std::cout<<"parseForHunks::containsLasIndClose with "<<sm.line;//<<std::endl;
+      std::cout<<"parseForHunks::containsLasIndClose with "<<sm.line;
       if (sm.commIndicators.empty())
       {
         std::cout<<"Any opening LAS comment does not exist in the file"<<std::endl;
@@ -92,11 +86,9 @@ public:
     }
     LasParserState operator()(HunkSubstAreaPossible&, HunkSubstBeginEvent&)
     {
-      std::cout<<"HunkSubstAreaPossible and HunkSubstBeginEvent: "<<sm.line;//<<std::endl;
-      auto const markEndIdx{sm.line.find(LANG::LAS_SUBST_BEGIN) + LANG::LAS_SUBST_BEGIN.length()};
+      std::cout<<"HunkSubstAreaPossible and HunkSubstBeginEvent: "<<sm.line;
+      auto const markEndIdx{sm.line.find(sm.lang->LAS_SUBST_BEGIN) + sm.lang->LAS_SUBST_BEGIN.length()};
       auto const linePart{sm.line.substr(markEndIdx)};
-      //auto const lastValidIdx{linePart.find_last_not_of(" \n\t")};
-      //auto const lineEndIdx{linePart.size() > 0 ? (lastValidIdx != std::npos ? lastValidIdx+1 : 0) : 0};
       auto const lineEndIdx{linePart.find_last_not_of(" \n\t")};
       auto const substContent{linePart.substr(0, (lineEndIdx != std::string::npos ? lineEndIdx+1 : 0))};
       sm.substContent += substContent;
@@ -104,7 +96,7 @@ public:
     }
     LasParserState operator()(HunkSubstArea&, NormalLineEvent&)
     {
-      std::cout<<"HunkSubstArea and NormalLineEvent: "<<sm.line;//<<std::endl;
+      std::cout<<"HunkSubstArea and NormalLineEvent: "<<sm.line;
       auto const lineEndIdx{sm.line.find_first_not_of("//")};
       auto const substContent{sm.line.substr((lineEndIdx != std::string::npos ? lineEndIdx : 0))};
       sm.substContent += substContent;
@@ -112,14 +104,14 @@ public:
     }
     LasParserState operator()(HunkSubstArea&, HunkSubstEndEvent&)
     {
-      auto const markStartIdx{sm.line.find(LANG::LAS_SUBST_END)};
+      auto const markStartIdx{sm.line.find(sm.lang->LAS_SUBST_END)};
       auto const linePart{sm.line.substr(0, markStartIdx)};
       sm.substContent += linePart;
       auto& lastHunk = sm.hunks.back();
       lastHunk.substContent = sm.substContent;
       if (lastHunk.clComment) { lastHunk.clComment->line = sm.lineNum; }
       else { lastHunk.clComment = LasComment{Comment::CLOSING, sm.lineNum}; }
-      std::cout<<"HunkSubstArea and HunkSubstEndEvent: "<<sm.line<<", opLineNum:"<<lastHunk.opComment.line<<", endlineNum:"<<lastHunk.clComment->line;//<<std::endl;
+      std::cout<<"HunkSubstArea and HunkSubstEndEvent: "<<sm.line<<", opLineNum:"<<lastHunk.opComment.line<<", endlineNum:"<<lastHunk.clComment->line;
       sm.substContent.clear();
       return NormalArea{};
     }
@@ -145,8 +137,7 @@ public:
     line = _line;
     lineNum = _lineNum;
     assignEventForLine(line);
-    currentState = std::visit(LasParserSm{*this}, currentState, currentEvent);//
-    //std::cout<<"PYCH::currentState: "<<currentState.index()<<", currentEvent: "<<currentEvent.index()<<",:"<<line<<", hunksSize:"<<hunks.size()<<std::endl;
+    currentState = std::visit(LasParserSm{*this}, currentState, currentEvent);
     if (std::holds_alternative<InvalidArea>(currentState))
     {
       std::cout<<"ERROR when parsing LAS HUNK:: lineNum:"<<lineNum<<", line: "<<line<<std::endl;
@@ -163,7 +154,7 @@ private:
   std::string substContent{};
   std::string_view line{};
   uint64_t lineNum{};
-  //LasParserSm lpSm;//
+  std::shared_ptr<LasLanguage> lang{};
 };
 
 

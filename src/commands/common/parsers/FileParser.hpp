@@ -17,7 +17,6 @@ namespace las::commands::common
 class AFileParser
 {
 public:
-  //using LasHunk = HunksParser::LasHunk;
   AFileParser() = default;
   virtual ~AFileParser() = default;
   virtual void parse(std::vector<std::string>& filenames) = 0;
