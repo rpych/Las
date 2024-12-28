@@ -7,10 +7,10 @@
 namespace las::commands
 {
 
-class DiffCommand: public ICommand, public ACommandWrapper
+class DiffStagedCommand: public ICommand, public ACommandWrapper
 {
 public:
-  DiffCommand();
+  DiffStagedCommand();
   void runAlgorithm() override;
 };
 

@@ -6,6 +6,8 @@ add_executable(las src/commands/common/OSProxyUtils.cpp
                    src/commands/CommandExecutor.cpp
                    src/commands/CutCommand.cpp
                    src/commands/diff/DiffCommand.cpp
+                   src/commands/diff/DiffHeadCommand.cpp
+                   src/commands/diff/DiffStagedCommand.cpp
                    src/commands/common/OSCommandProxy.cpp
                    src/commands/common/parsers/FileParser.cpp
                    src/commands/common/parsers/HunksParser.cpp

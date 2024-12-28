@@ -31,6 +31,7 @@ int fun()
 {
   double c = 0.2;
   return c;
+  
 }
 
 //^^las end^^

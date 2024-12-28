@@ -12,9 +12,9 @@ template<typename T>
 class AOSCommandProxy
 {
 public:
-  virtual void executeOsCommand(T command) = 0;
+  virtual std::string const& executeOsCommand(T command) = 0;
   virtual void executeOsCommandNotSave(T command) = 0;
-  virtual std::string& getOsCommandResult() = 0;
+  //virtual std::string& getOsCommandResult() = 0;
   virtual ~AOSCommandProxy() = default;
 };
 
@@ -23,10 +23,10 @@ class OSCommandProxy: public AOSCommandProxy<T>
 {
 public:
   OSCommandProxy(): allowedOsCommands{initAllowedOsCommands()} {};
-  void executeOsCommand(T command) override;
+  std::string const& executeOsCommand(T command) override;
   void executeOsCommandNotSave(T command) override;
-  std::string& getOsCommandResult() override;
 private:
+  std::string const& getOsCommandResult();
   void clearOsCommand();
   std::map<T, std::string> const initAllowedOsCommands();
   std::map<T, std::string> const& getAllowedOsCommands();
