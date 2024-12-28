@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <sstream>
-//#include "../parsers/HunksParser.hpp"
 #include "../Utils.hpp"
 
 namespace las::commands::common
@@ -10,7 +9,6 @@ namespace las::commands::common
 class ACodeWriter
 {
 public:
-  //using LasHunk = HunksParser::LasHunk;
   ACodeWriter() = default;
   virtual ~ACodeWriter() = default;
   virtual void write(std::string const& filename, std::vector<LasHunk> const& lasHunks) = 0;

@@ -112,13 +112,6 @@ inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view
   return filenames;
 }
 
-//template<const char* pattern>
-inline bool containsLasIndOpen(std::string_view l) { return l.find("//^^las begin^^") != std::string::npos; }
-inline bool containsLasIndClose(std::string_view l) { return l.find("//^^las end^^") != std::string::npos; }
-inline bool containsSingleLasInd(std::string_view l) { return l.find("//^^las^^") != std::string::npos; }
-inline bool containsLasIndSubstOpen(std::string_view l) { return l.find("//^^las sub begin^^") != std::string::npos; }
-inline bool containsLasIndSubstClose(std::string_view l) { return l.find("//^^las sub end^^") != std::string::npos; }
-
 inline std::string const getParsedFileExtension(std::string_view filename)
 {
   auto const fileExtensionIdx{filename.find_last_of(".")};
@@ -138,6 +131,37 @@ inline std::shared_ptr<LasLanguage> getLanguage(std::string_view filename)
     return availableLanguages.at(Language::CPP);
   }
   return std::shared_ptr<LasLanguage>();
+}
+
+inline std::string const getSubstContentFromRightSide(std::string_view line, std::string_view lasKeyPhrase)
+{
+  auto const markEndIdx{line.find(lasKeyPhrase) + lasKeyPhrase.length()};
+  auto const linePart{line.substr(markEndIdx)};
+  auto const lineEndIdx{linePart.find_last_not_of(" \n\t")};
+  std::string substContent{linePart.substr(0, (lineEndIdx != std::string::npos ? lineEndIdx+1 : 0))};
+  return substContent;
+}
+
+inline std::string const getSubstContentFromLeftSide(std::string_view line, std::string_view lasKeyPhrase, std::string_view langComment)
+{
+  auto const markStartIdx{line.find(lasKeyPhrase)};
+  auto const linePart{line.substr(0, markStartIdx)};
+  auto const lineEndIdx{linePart.find_last_not_of(langComment)};
+  std::string substContent{linePart.substr(0, (lineEndIdx != std::string::npos ? lineEndIdx+1 : 0))};
+  return substContent;
+}
+
+inline std::string const getNormalLineSubstContent(std::string_view line, std::string_view langComment)
+{
+  auto const foundCommentStartIdx{line.find(langComment)};
+  auto const notBlankStartIdx{line.find_first_not_of(" \n\t")};
+  if ((foundCommentStartIdx != std::string::npos) and foundCommentStartIdx == notBlankStartIdx)
+  {
+    std::string const substContentLeft {line.substr(0, foundCommentStartIdx)};
+    std::string const substContentRight {line.substr(foundCommentStartIdx + langComment.length())};
+    return (substContentLeft + substContentRight);
+  }
+  return static_cast<std::string>(line);
 }
 
 }

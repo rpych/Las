@@ -19,6 +19,7 @@ void CodeWriterExclude::write(std::string const& filename,
 void CodeWriterExclude::updateFileContent(std::string const& filename,
                                           std::vector<LasHunk> const& lasHunks)
 {
+  std::shared_ptr<LasLanguage> lasLang{getLanguage(filename)};
   auto lineNum{1};
   std::string line{};
   while(std::getline(inFileContentStream, line))
@@ -30,7 +31,7 @@ void CodeWriterExclude::updateFileContent(std::string const& filename,
       outFileContentStream << line;
     }
     else if (matchingLasHunk and 
-            (containsLasIndSubstClose(line) or (containsSingleLasInd(line) and not matchingLasHunk->clComment)))
+            (lasLang->containsLasIndSubstClose(line) or (lasLang->containsSingleLasInd(line) and not matchingLasHunk->clComment)))
     {
       auto& substitutionContent = matchingLasHunk->substContent;
       auto substContentUpdated = (substitutionContent != "") ? substitutionContent.substr(0, (substitutionContent.find_last_not_of("\n") + 1))
