@@ -7,7 +7,7 @@
 
 namespace las::commands::common
 {
-//using LasHunk = HunksParser::LasHunk;
+
 inline std::optional<LasHunk> getLasHunkContainingLine(std::vector<LasHunk> const& lasHunks, uint64_t lineNum)
 {
   auto res = std::find_if(lasHunks.begin(), lasHunks.end(), [lineNum](auto const& hunk)
@@ -31,7 +31,6 @@ int fun()
 {
   double c = 0.2;
   return c;
-  
 }
 
 //^^las end^^

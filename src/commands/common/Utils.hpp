@@ -26,14 +26,19 @@ enum class LasCmd
 {
   INVALID,
   CUT,
-  DIFF
+  DIFF,
+  DIFF_HEAD,
+  DIFF_STAGED
 };
 
 enum class LasCmdOpts
 {
   INVALID,
   EXCLUDE,
-  INCLUDE
+  FILES,
+  SINGLE_MODE,
+  PARALLEL_MODE,
+  GIT
 };
 
 enum class GitCmd
@@ -88,7 +93,7 @@ static std::map<LasCmd, std::set<LasCmdOpts>> predefineOpts()
   std::map<LasCmd, std::set<LasCmdOpts>> opts;
   opts.emplace(LasCmd::INVALID, std::set({LasCmdOpts::INVALID}));
   opts.emplace(LasCmd::CUT, std::set({LasCmdOpts::EXCLUDE}));
-  opts.emplace(LasCmd::DIFF, std::set({LasCmdOpts::EXCLUDE, LasCmdOpts::INCLUDE}));
+  opts.emplace(LasCmd::DIFF, std::set({LasCmdOpts::EXCLUDE}));
   return opts;
 }
 

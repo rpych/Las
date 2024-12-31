@@ -12,7 +12,6 @@ class AFileParser;
 class AFileWriter
 {
 public:
-  //using LasHunk = HunksParser::LasHunk;
   AFileWriter() = default;
   virtual ~AFileWriter() = default;
   virtual void write(std::unordered_map<std::string, std::vector<LasHunk>>const& filesHunks) = 0;

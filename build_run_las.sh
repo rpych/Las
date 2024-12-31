@@ -12,5 +12,5 @@ echo -e "Running googletests"
 
 #ctest --target las_test
 
-cd ../.. && ./build/las diff --include
+cd ../.. && ./build/las diff
 

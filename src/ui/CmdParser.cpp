@@ -13,8 +13,7 @@ void CmdParser::parse(char const* args[])
     std::string lowercasedWord{};
     std::transform(std::begin(lexem), std::end(lexem), std::back_inserter(lowercasedWord),
                                       [](auto const c){ return std::tolower(c); });
-    if (auto res = recognizeCmdPart(lowercasedWord)) continue;
-    addFilename(args[i]);
+    recognizeCmdPart(lowercasedWord);
   }
   //temp line below
   std::copy(inputFilenames.begin(), inputFilenames.end(), std::ostream_iterator<std::string>(std::cout, ", "));
@@ -28,23 +27,55 @@ void CmdParser::parse(char const* args[])
     //process chosen files
     std::cout<<"\nProcess only chosen files size"<<inputFilenames.size()<<std::endl;
   }
-  
 }
 
-bool CmdParser::recognizeCmdPart(std::string_view cmdPart)
+std::vector<std::string>& CmdParser::getFilenames()
 {
-  bool res{};
-  if (command == common::LasCmd::INVALID and cmdPart == "diff")
+  return inputFilenames;
+}
+
+common::LasCmd CmdParser::getCommand()
+{
+  return command;
+}
+
+std::set<common::LasCmdOpts>& CmdParser::getOptions()
+{
+  return options;
+}
+
+void CmdParser::recognizeCmdPart(std::string_view cmdPart)
+{
+  if (cmdPart.find("diff") != std::string::npos)
   {
-    command = common::LasCmd::DIFF;
-    res = true;
+    event = Diff{};
+    state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else if(command != common::LasCmd::INVALID and cmdPart == "--include")
+  else if (cmdPart.find("cut") != std::string::npos)
   {
-    options.insert(common::LasCmdOpts::INCLUDE);
-    res = true;
+    event = Cut{};
+    state = std::visit(CmdParserSm{*this}, state, event);
   }
-  return res;
+  else if (cmdPart.find("head") != std::string::npos)
+  {
+    event = Head{};
+    state = std::visit(CmdParserSm{*this}, state, event);
+  }
+  else if (cmdPart.find("staged") != std::string::npos)
+  {
+    event = Staged{};
+    state = std::visit(CmdParserSm{*this}, state, event);
+  }
+  else if (cmdPart.find("--par") != std::string::npos)
+  {
+    event = ParallelMode{};
+    state = std::visit(CmdParserSm{*this}, state, event);
+  }
+  else
+  {
+    event = Filename{.name=std::string(cmdPart)};
+    state = std::visit(CmdParserSm{*this}, state, event);
+  }
 }
 
 void CmdParser::addFilename(std::string_view filename)

@@ -14,7 +14,6 @@ class AOSCommandProxy
 public:
   virtual std::string const& executeOsCommand(T command) = 0;
   virtual void executeOsCommandNotSave(T command) = 0;
-  //virtual std::string& getOsCommandResult() = 0;
   virtual ~AOSCommandProxy() = default;
 };
 
