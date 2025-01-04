@@ -29,17 +29,17 @@ void CmdParser::parse(char const* args[])
   }
 }
 
-std::vector<std::string>& CmdParser::getFilenames()
+std::vector<std::string> const& CmdParser::getFilenames()
 {
   return inputFilenames;
 }
 
-common::LasCmd CmdParser::getCommand()
+common::LasCmd const CmdParser::getCommand()
 {
   return command;
 }
 
-std::set<common::LasCmdOpts>& CmdParser::getOptions()
+std::set<common::LasCmdOpts> const& CmdParser::getOptions()
 {
   return options;
 }

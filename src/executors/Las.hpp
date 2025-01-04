@@ -3,7 +3,6 @@
 #include <memory>
 #include "../ui/CmdParser.hpp"
 #include "../commands/CommandExecutor.hpp"
-#include "../commands/diff/DiffCommand.hpp"
 
 // namespace las::commands
 // {

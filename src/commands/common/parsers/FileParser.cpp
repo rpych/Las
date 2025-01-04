@@ -7,7 +7,7 @@ namespace las::commands::common
 FileParser::FileParser(): filesHunks{}
 {}
 
-void FileParser::parse(std::vector<std::string>& filenames)
+void FileParser::parse(std::vector<std::string> const& filenames)
 {
   std::cout<<"FileParser::parse"<<std::endl;
   std::for_each(filenames.begin(), filenames.end(), [this](auto const& f)

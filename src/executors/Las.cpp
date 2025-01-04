@@ -12,7 +12,7 @@ void Las::run(char const* args[])
 {
   parser->parse(args);
   //find command to execute from parsed output
-  cmdExecutor->setCommand(std::make_unique<las::commands::DiffCommand>());
+  cmdExecutor->setCommand(std::move(parser));
   cmdExecutor->execute();
 }
 

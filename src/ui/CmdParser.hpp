@@ -32,9 +32,9 @@ class ICmdParser
 public:
   ICmdParser() {};
   virtual void parse(char const* args[]) = 0;
-  virtual std::vector<std::string>& getFilenames() = 0;
-  virtual common::LasCmd getCommand() = 0;
-  virtual std::set<common::LasCmdOpts>& getOptions() = 0;
+  virtual std::vector<std::string> const& getFilenames() = 0;
+  virtual common::LasCmd const getCommand() = 0;
+  virtual std::set<common::LasCmdOpts> const& getOptions() = 0;
   virtual ~ICmdParser() = default;
 };
 
@@ -105,9 +105,9 @@ public:
 
   CmdParser(int _argc): argc(_argc) {}
   void parse(char const* args[]) override;
-  std::vector<std::string>& getFilenames() override;
-  common::LasCmd getCommand() override;
-  std::set<common::LasCmdOpts>& getOptions() override;
+  std::vector<std::string> const& getFilenames() override;
+  common::LasCmd const getCommand() override;
+  std::set<common::LasCmdOpts> const& getOptions() override;
 private:
   void recognizeCmdPart(std::string_view cmdPart);
   void addFilename(std::string_view filename);
@@ -115,7 +115,7 @@ private:
   int argc{};
   std::vector<std::string> inputFilenames{};
   common::LasCmd command{common::LasCmd::INVALID};
-  std::set<common::LasCmdOpts> options{/*common::LasCmdOpts::EXCLUDE,*/ common::LasCmdOpts::SINGLE_MODE, common::LasCmdOpts::GIT};
+  std::set<common::LasCmdOpts> options{common::LasCmdOpts::SINGLE_MODE};
   CmdState state{StateParseCommand{}};
   CmdEvent event{};
 };

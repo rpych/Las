@@ -3,6 +3,18 @@
 
 namespace las
 {
+  #define __GIT_VCS__ 1
+  #ifdef  __GIT_VCS__
+    #define GET_VCS las::commands::common::GitCmd
+  #endif
+
+  enum class Language
+  {
+    CPP,
+    ELIXIR,
+    PYTHON
+  };
+
   struct LasLanguage
   {
     LasLanguage(std::string_view _COMMENT) : COMMENT(_COMMENT) {}

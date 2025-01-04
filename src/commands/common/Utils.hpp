@@ -16,12 +16,6 @@
 namespace las::commands::common
 {
 
-enum class Language
-{
-  CPP,
-  ELIXIR
-};
-
 enum class LasCmd
 {
   INVALID,
@@ -34,11 +28,9 @@ enum class LasCmd
 enum class LasCmdOpts
 {
   INVALID,
-  EXCLUDE,
   FILES,
   SINGLE_MODE,
-  PARALLEL_MODE,
-  GIT
+  PARALLEL_MODE
 };
 
 enum class GitCmd
@@ -87,17 +79,6 @@ struct LasHunk
     return out<<"Opening::line="<<lh.opComment.line<<" closing::line="<<clLine<<"\nsubstContent\n"<<lh.substContent<<std::endl;
   }
 };
-
-static std::map<LasCmd, std::set<LasCmdOpts>> predefineOpts()
-{
-  std::map<LasCmd, std::set<LasCmdOpts>> opts;
-  opts.emplace(LasCmd::INVALID, std::set({LasCmdOpts::INVALID}));
-  opts.emplace(LasCmd::CUT, std::set({LasCmdOpts::EXCLUDE}));
-  opts.emplace(LasCmd::DIFF, std::set({LasCmdOpts::EXCLUDE}));
-  return opts;
-}
-
-static std::map<LasCmd, std::set<LasCmdOpts>> availableOpts {predefineOpts()};
 
 static std::map<Language, std::shared_ptr<LasLanguage>> predefineLanguages()
 {

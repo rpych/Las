@@ -11,11 +11,11 @@ void FileWriter::write(std::unordered_map<std::string, std::vector<LasHunk>>cons
   std::unique_ptr<ACodeWriter> codeWriter{createCodeWriter(option)};
   std::for_each(filesHunks.begin(), filesHunks.end(), [&codeWriter](auto const& hunkInfo)
   {
-    auto const& [filename, hunk] = hunkInfo;
+    auto const& [filename, hunks] = hunkInfo;
     std::cout<<"FILE WRITER: "<<filename<<std::endl;
     if (filename.find("src/commands/common/writers/WriterUtils.hpp") != std::string::npos)
     {
-      codeWriter->write(filename, hunk);
+      codeWriter->write(filename, hunks);
     }
     
   });
@@ -25,7 +25,7 @@ std::unique_ptr<ACodeWriter> FileWriter::createCodeWriter(LasCmdOpts option)
 {
   switch (option)
   {
-    case LasCmdOpts::EXCLUDE:
+    case LasCmdOpts::SINGLE_MODE:
       return std::make_unique<CodeWriterExclude>();
     default:
       return nullptr;

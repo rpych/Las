@@ -4,7 +4,7 @@
 namespace las::commands
 {
 
-DiffCommand::DiffCommand(): ACommandWrapper()
+DiffCommand::DiffCommand(CommandParams& params): ACommandWrapper(params)
 {}
 
 void DiffCommand::runAlgorithm()
@@ -14,8 +14,7 @@ void DiffCommand::runAlgorithm()
   // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH);
   // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_APPLY);
   //!!!!!!!!!!!!!!!GIT_DIFF_FILES in the end!!!!!!!!!!!!!!!!!!!!!!!!
-  std::string const filenamesBundle = osCommandProxy->executeOsCommand(common::GitCmd::GIT_DIFF_HEAD_FILES);
-  auto filenames = std::move(common::getFilenamesFromStatusCmd(filenamesBundle));
+  auto const& filenames = (cmdLineFilenames) ? *cmdLineFilenames : std::move(getAllFilenames());
   fileParser->parse(filenames);
   fileWriter->write(fileParser->getFilesHunks());
   // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF);

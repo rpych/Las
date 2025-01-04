@@ -1,8 +1,6 @@
 #pragma once
 #include "ICommand.hpp"
 #include "ACommandWrapper.hpp"
-#include "Utils.hpp"
-#include "../common/parsers/FileParser.hpp"
 
 namespace las::commands
 {
@@ -10,7 +8,7 @@ namespace las::commands
 class DiffStagedCommand: public ICommand, public ACommandWrapper
 {
 public:
-  DiffStagedCommand();
+  DiffStagedCommand(CommandParams& params);
   void runAlgorithm() override;
 };
 
