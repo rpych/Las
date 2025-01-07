@@ -47,7 +47,8 @@ public:
     LasParserState operator()(NormalArea&, HunkSingleEvent&)
     {
       std::string substContent {std::move(getSubstContentFromRightSide(sm.line, sm.lang->LAS_SINGLE))};
-      sm.hunks.push_back(LasHunk{.substContent=substContent, .opComment=LasComment{Comment::OPENING, sm.lineNum}});
+      sm.hunks.push_back(LasHunk{.substContent=substContent, .opComment=LasComment{Comment::OPENING, sm.lineNum},
+                                                             .clComment=LasComment{Comment::CLOSING, sm.lineNum}});
       if (substContent.size() > 0) { return NormalArea{}; }
       return HunkSubstAreaPossible{};
     }
@@ -71,7 +72,7 @@ public:
         std::cout<<"Lacking LAS opening comment for LAS closing comment "<<std::endl;
         return InvalidArea{};
       }
-      sm.hunks.push_back(LasHunk{.opComment=openingComment, .clComment=std::make_optional(LasComment{Comment::CLOSING, sm.lineNum})});
+      sm.hunks.push_back(LasHunk{.opComment=openingComment, .clComment=LasComment{Comment::CLOSING, sm.lineNum}});
       return HunkSubstAreaPossible{};
     }
     LasParserState operator()(HunkSubstAreaPossible&, NormalLineEvent&)
@@ -99,8 +100,7 @@ public:
       sm.substContent += substContent;
       auto& lastHunk = sm.hunks.back();
       lastHunk.substContent = sm.substContent;
-      if (lastHunk.clComment) { lastHunk.clComment->line = sm.lineNum; }
-      else { lastHunk.clComment = LasComment{Comment::CLOSING, sm.lineNum}; }
+      lastHunk.clComment.line = sm.lineNum;
       sm.substContent.clear();
       return NormalArea{};
     }

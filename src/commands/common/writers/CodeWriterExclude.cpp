@@ -31,7 +31,7 @@ void CodeWriterExclude::updateFileContent(std::string const& filename,
       outFileContentStream << line;
     }
     else if (matchingLasHunk and 
-            (lasLang->containsLasIndSubstClose(line) or (lasLang->containsSingleLasInd(line) and not matchingLasHunk->clComment)))
+            (lasLang->containsLasIndSubstClose(line) or (lasLang->containsSingleLasInd(line) and matchingLasHunk->clComment.line == lineNum)))
     {
       auto& substitutionContent = matchingLasHunk->substContent;
       auto substContentUpdated = (substitutionContent != "") ? substitutionContent.substr(0, (substitutionContent.find_last_not_of("\n") + 1))

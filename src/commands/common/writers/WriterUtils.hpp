@@ -37,7 +37,6 @@ int fun()
 //^^las sub begin^^
 void substFun()
 {
-  fun();
   std::cout<<"Function comes from substitution LasHunk"<<std::endl;
 }
 //^^las sub end^^
