@@ -61,14 +61,12 @@ public:
     CmdState operator()(StateCommandKnown&, Head&)
     {
       if (parser.command == common::LasCmd::DIFF) { parser.command = common::LasCmd::DIFF_HEAD; }
-      else if (parser.command == common::LasCmd::CUT) { parser.command = common::LasCmd::CUT; }
       else { std::cout<<"Error.\"HEAD\" used with wrong command name!"<<std::endl; }
       return StateParseFilenames{};
     }
     CmdState operator()(StateCommandKnown&, Staged&)
     {
       if (parser.command == common::LasCmd::DIFF) { parser.command = common::LasCmd::DIFF_STAGED; }
-      else if (parser.command == common::LasCmd::CUT) { parser.command = common::LasCmd::CUT; }
       else { std::cout<<"Error.\"staged\" used with wrong command name!"<<std::endl; }
       return StateParseFilenames{};
     }

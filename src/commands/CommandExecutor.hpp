@@ -2,6 +2,7 @@
 #include <memory>
 #include "ICommand.hpp"
 #include "../ui/CmdParser.hpp"
+#include "../commands/cut/CutCommand.hpp"
 #include "../commands/diff/DiffCommand.hpp"
 #include "../commands/diff/DiffHeadCommand.hpp"
 #include "../commands/diff/DiffStagedCommand.hpp"

@@ -26,6 +26,9 @@ std::unique_ptr<ICommand> CommandExecutor::createCommand(std::unique_ptr<las::ui
                              .filenames=filenames}};
   switch (parser->getCommand())
   {
+    case common::LasCmd::CUT:
+      return std::make_unique<las::commands::CutCommand>(params);
+      break;
     case common::LasCmd::DIFF:
       return std::make_unique<las::commands::DiffCommand>(params);
       break;

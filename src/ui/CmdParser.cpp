@@ -46,27 +46,27 @@ std::set<common::LasCmdOpts> const& CmdParser::getOptions()
 
 void CmdParser::recognizeCmdPart(std::string_view cmdPart)
 {
-  if (cmdPart.find("diff") != std::string::npos)
+  if (cmdPart == "diff")
   {
     event = Diff{};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else if (cmdPart.find("cut") != std::string::npos)
+  else if (cmdPart == "cut")
   {
     event = Cut{};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else if (cmdPart.find("head") != std::string::npos)
+  else if (cmdPart == "head")
   {
     event = Head{};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else if (cmdPart.find("staged") != std::string::npos)
+  else if (cmdPart == "staged")
   {
     event = Staged{};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else if (cmdPart.find("--par") != std::string::npos)
+  else if (cmdPart == "--par")
   {
     event = ParallelMode{};
     state = std::visit(CmdParserSm{*this}, state, event);
@@ -76,6 +76,7 @@ void CmdParser::recognizeCmdPart(std::string_view cmdPart)
     event = Filename{.name=std::string(cmdPart)};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
+  std::cout<<"cmdPart:"<<cmdPart<<", event:"<< event.index()<<std::endl;
 }
 
 void CmdParser::addFilename(std::string_view filename)

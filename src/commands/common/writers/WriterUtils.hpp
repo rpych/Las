@@ -31,13 +31,13 @@ int fun()
 {
   double c = 0.2;
   return c;
-
 }
 
 //^^las end^^
 //^^las sub begin^^
 void substFun()
 {
+  fun();
   std::cout<<"Function comes from substitution LasHunk"<<std::endl;
 }
 //^^las sub end^^

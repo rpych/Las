@@ -18,9 +18,8 @@ void DiffStagedCommand::runAlgorithm()
   fileWriter->write(fileParser->getFilesHunks());
   // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF_HEAD);
   // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_RESET_HARD);
+  // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_POP_INDEX_1);
   // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_POP);
-  // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_POP_INDEX);
-  //next steps of las diff command
 }
 
 }
