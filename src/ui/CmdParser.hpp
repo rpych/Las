@@ -31,7 +31,7 @@ class ICmdParser
 {
 public:
   ICmdParser() {};
-  virtual void parse(char const* args[]) = 0;
+  virtual void parse(std::vector<std::string> const& args) = 0;
   virtual std::vector<std::string> const& getFilenames() = 0;
   virtual common::LasCmd const getCommand() = 0;
   virtual std::set<common::LasCmdOpts> const& getOptions() = 0;
@@ -102,7 +102,7 @@ public:
   };
 
   CmdParser(int _argc): argc(_argc) {}
-  void parse(char const* args[]) override;
+  void parse(std::vector<std::string> const& args) override;
   std::vector<std::string> const& getFilenames() override;
   common::LasCmd const getCommand() override;
   std::set<common::LasCmdOpts> const& getOptions() override;

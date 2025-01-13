@@ -13,11 +13,7 @@ void FileWriter::write(std::unordered_map<std::string, std::vector<LasHunk>>cons
   {
     auto const& [filename, hunks] = hunkInfo;
     std::cout<<"FILE WRITER: "<<filename<<std::endl;
-    if (filename.find("src/commands/common/writers/WriterUtils.hpp") != std::string::npos)
-    {
-      codeWriter->write(filename, hunks);
-    }
-    
+    codeWriter->write(filename, hunks);
   });
 }
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "ICommand.hpp"
-#include "ACommandWrapper.hpp"
+#include "../ICommand.hpp"
+#include "../ACommandWrapper.hpp"
 
 namespace las::commands
 {

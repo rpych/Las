@@ -1,5 +1,5 @@
 #include "FileParser.hpp"
-#include "OSProxyUtils.hpp"
+#include "../OSProxyUtils.hpp"
 
 namespace las::commands::common
 {

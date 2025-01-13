@@ -1,23 +1,30 @@
-cmake_minimum_required(VERSION 3.24)
-project(Las VERSION 1.0)
-
+include_directories (${Las_SOURCE_DIR})
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/b10fad38c4026a29ea6561ab15fc4818170d1c10.zip
+  URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
 )
 
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-
 add_executable(
   las_test
-  ${PROJECT_SOURCE_DIR}/testcases/example.cc
+  ${PROJECT_SOURCE_DIR}/test/testcases/LasTest.cpp
 )
+
+target_include_directories(las_test
+                           PRIVATE
+                           ${PROJECT_SOURCE_DIR}/testcases)
+
+add_library(language_req_test INTERFACE)
+target_compile_features(language_req_test INTERFACE cxx_std_20)
+
+target_link_libraries(las_test PUBLIC language_req_test)
+target_link_libraries(las_test PUBLIC las_lib)
 
 target_link_libraries(
   las_test
+  PUBLIC
   GTest::gtest_main
 )
 

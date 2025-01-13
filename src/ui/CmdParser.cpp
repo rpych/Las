@@ -5,11 +5,11 @@
 namespace las::ui
 {
 
-void CmdParser::parse(char const* args[])
+void CmdParser::parse(std::vector<std::string> const& args)
 {
   for(int i=1; i < argc; ++i)
   {
-    std::string_view lexem{args[i]};
+    std::string_view lexem{args.at(i)};
     std::string lowercasedWord{};
     std::transform(std::begin(lexem), std::end(lexem), std::back_inserter(lowercasedWord),
                                       [](auto const c){ return std::tolower(c); });
