@@ -16,12 +16,14 @@ std::map<GitCmd, std::string> const OSCommandProxy<GitCmd>::initAllowedOsCommand
   //osCommands.emplace(GitCmd::GIT_DIFF_STAGED, "git diff --staged"s);
   osCommands.emplace(GitCmd::GIT_STASH, "git stash"s); // >/dev/null 2>&1
   osCommands.emplace(GitCmd::GIT_STASH_PUSH_STAGED, "git stash push --staged"s); // >/dev/null 2>&1
-  osCommands.emplace(GitCmd::GIT_STASH_APPLY, "git stash apply stash@{0}"s);
-  osCommands.emplace(GitCmd::GIT_STASH_APPLY_1, "git stash apply stash@{1}"s);
+  osCommands.emplace(GitCmd::GIT_STASH_APPLY, "git stash apply --index stash@{0}"s);
+  osCommands.emplace(GitCmd::GIT_STASH_APPLY_1, "git stash apply --index stash@{1}"s);
   osCommands.emplace(GitCmd::GIT_STASH_POP, "git stash pop"s);
   osCommands.emplace(GitCmd::GIT_STASH_POP_INDEX, "git stash pop --index"s);
   osCommands.emplace(GitCmd::GIT_STASH_POP_INDEX_1, "git stash pop --index stash@{1}"s);
   osCommands.emplace(GitCmd::GIT_RESET_HARD, "git reset HEAD --hard"s);
+  osCommands.emplace(GitCmd::GIT_STASH_DROP, "git stash drop stash@{0}"s);
+  osCommands.emplace(GitCmd::GIT_STASH_DROP_1, "git stash drop stash@{1}"s);
   return osCommands;
 }
 

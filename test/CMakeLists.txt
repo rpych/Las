@@ -14,6 +14,7 @@ add_executable(
 
 target_include_directories(las_test
                            PRIVATE
+                           ${PROJECT_SOURCE_DIR}/
                            ${PROJECT_SOURCE_DIR}/testcases)
 
 add_library(language_req_test INTERFACE)

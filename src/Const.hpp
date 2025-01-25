@@ -3,6 +3,10 @@
 
 namespace las
 {
+
+const inline std::string LasHiddenDirectory{".las_directory"};
+constexpr inline uint16_t BackupMaxEntries{4}; 
+
   #define __GIT_VCS__ 1
   #ifdef  __GIT_VCS__
     #define GET_VCS las::commands::common::GitCmd

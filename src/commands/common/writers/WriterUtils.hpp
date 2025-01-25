@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <optional>
 #include "../Utils.hpp"
-//#include "../parsers/HunksParser.hpp"
 
 namespace las::commands::common
 {
@@ -16,6 +15,12 @@ inline std::optional<LasHunk> getLasHunkContainingLine(std::vector<LasHunk> cons
   });
   return (res != lasHunks.end() ? *res : std::optional<LasHunk>(std::nullopt));
 }
+
+inline bool isEmptyStream(std::stringstream& stream)
+{
+  return stream.tellp() == 0;
+} 
+
 }
 
 class Baba; //^^las^^ class BaBaDaDa;

@@ -46,6 +46,7 @@ public:
     }
     LasParserState operator()(NormalArea&, HunkSingleEvent&)
     {
+      std::cout<<"NormalArea and HunkSingleEvent: "<<sm.line;
       std::string substContent {std::move(getSubstContentFromRightSide(sm.line, sm.lang->LAS_SINGLE))};
       sm.hunks.push_back(LasHunk{.substContent=substContent, .opComment=LasComment{Comment::OPENING, sm.lineNum},
                                                              .clComment=LasComment{Comment::CLOSING, sm.lineNum}});
@@ -59,7 +60,7 @@ public:
     }
     LasParserState operator()(HunkArea&, HunkEndEvent&)
     {
-      std::cout<<"parseForHunks::containsLasIndClose with "<<sm.line;
+      std::cout<<"HunkArea and HunkEndEvent: "<<sm.line;
       if (sm.commIndicators.empty())
       {
         std::cout<<"Any opening LAS comment does not exist in the file"<<std::endl;
@@ -77,7 +78,7 @@ public:
     }
     LasParserState operator()(HunkSubstAreaPossible&, NormalLineEvent&)
     {
-      std::cout<<"HunkSubstAreaPossible and NormalLineEvent: "<<sm.line<<std::endl;
+      std::cout<<"HunkSubstAreaPossible and NormalLineEvent: "<<sm.line;
       return NormalArea{};
     }
     LasParserState operator()(HunkSubstAreaPossible&, HunkSubstBeginEvent&)
@@ -96,6 +97,7 @@ public:
     }
     LasParserState operator()(HunkSubstArea&, HunkSubstEndEvent&)
     {
+      std::cout<<"HunkSubstArea and HunkSubstEndEvent: "<<sm.line;
       std::string substContent {std::move(getSubstContentFromLeftSide(sm.line, sm.lang->LAS_SUBST_END, sm.lang->COMMENT))};
       sm.substContent += substContent;
       auto& lastHunk = sm.hunks.back();

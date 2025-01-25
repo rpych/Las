@@ -48,7 +48,9 @@ enum class GitCmd
   GIT_STASH_POP,
   GIT_STASH_POP_INDEX,
   GIT_STASH_POP_INDEX_1,
-  GIT_RESET_HARD
+  GIT_RESET_HARD,
+  GIT_STASH_DROP,
+  GIT_STASH_DROP_1
 };
 
 enum class Comment
@@ -140,6 +142,7 @@ inline std::string const getSubstContentFromLeftSide(std::string_view line, std:
   auto const linePart{line.substr(0, markStartIdx)};
   auto const lineEndIdx{linePart.find_last_not_of(langComment)};
   std::string substContent{linePart.substr(0, (lineEndIdx != std::string::npos ? lineEndIdx+1 : 0))};
+  substContent = (substContent.find_last_not_of(" \n\t") != std::string::npos) ? substContent : "";
   return substContent;
 }
 

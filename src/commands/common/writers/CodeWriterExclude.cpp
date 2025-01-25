@@ -14,6 +14,8 @@ void CodeWriterExclude::write(std::string const& filename,
   readFileContent(inFileContentStream, filename);
   updateFileContent(filename, lasHunks);
   writeContentToFile(outFileContentStream, filename);
+  inFileContentStream = std::stringstream{};
+  outFileContentStream = std::stringstream{};
 }
 
 void CodeWriterExclude::updateFileContent(std::string const& filename,
@@ -25,9 +27,10 @@ void CodeWriterExclude::updateFileContent(std::string const& filename,
   while(std::getline(inFileContentStream, line))
   {
     auto matchingLasHunk = getLasHunkContainingLine(lasHunks, lineNum);
+    std::cout<<"CodeWriterExclude::lineNum:"<<lineNum<<", line:"<<line<<std::endl;
     if (not matchingLasHunk)
     {
-      line = (lineNum == 1 ? "" : "\n") + line;
+      line = (isEmptyStream(outFileContentStream) ? "" : "\n") + line;
       outFileContentStream << line;
     }
     else if (matchingLasHunk and 
@@ -37,11 +40,15 @@ void CodeWriterExclude::updateFileContent(std::string const& filename,
       auto substContentUpdated = (substitutionContent != "") ? substitutionContent.substr(0, (substitutionContent.find_last_not_of("\n") + 1))
                                                              : substitutionContent;
       std::cout<<"updateFileContent::substContent:"<<matchingLasHunk->substContent<<",size:"<<matchingLasHunk->substContent.length()<<",substContentUpdated:"<<substContentUpdated<<",size:"<<substContentUpdated.length()<<std::endl;
-      outFileContentStream << ((lineNum == 1 ? "" : "\n") + (substContentUpdated));
+      if (substContentUpdated != "")
+      {
+        outFileContentStream << (((isEmptyStream(outFileContentStream)) ? "" : "\n") + (substContentUpdated));
+      }
     }
     lineNum++;
     line.clear();
   }
+  outFileContentStream << "\n";
 }
 
 }

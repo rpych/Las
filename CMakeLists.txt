@@ -49,6 +49,6 @@ target_compile_features(las_lib PRIVATE cxx_std_20)
 enable_testing()
 add_subdirectory(test)
 set(WORK_DIRECTORY_FOR_TESTS
-    ${PROJECT_SOURCE_DIR}/test)
+    ${PROJECT_SOURCE_DIR})
 add_test(NAME LasTestParametrized COMMAND las_test WORKING_DIRECTORY ${WORK_DIRECTORY_FOR_TESTS})
 

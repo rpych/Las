@@ -1,13 +1,25 @@
 #pragma once
 #include <iostream>
 
-class Baba; //^^las^^ class BaBaDaDa;
+class SingleClass; //^^las^^ class SingleHunkClass;
 
-struct Raptor{}; //^^las^^  
+struct SubstitutionStruct{}; //^^las^^  
 //^^las sub begin^^
 
-//trala lala
+double value{}; 
+////this is comment example
 //^^las sub end^^
+
+
+int getMax(int a, int b)
+{
+  if (a > b)
+  {
+    return a;
+  }
+  return b;
+}
+
 
 //^^las begin^^
 int fun()
@@ -23,3 +35,4 @@ void substFun()
   std::cout<<"Function comes from substitution LasHunk"<<std::endl;
 }
 //^^las sub end^^
+

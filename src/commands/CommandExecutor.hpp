@@ -24,11 +24,12 @@ public:
   void execute() override;
   void setCommand(std::unique_ptr<las::ui::ICmdParser> parser) override;
 
-private:
-  std::unique_ptr<ICommand> createCommand(std::unique_ptr<las::ui::ICmdParser> parser);
+protected:
+  virtual std::unique_ptr<ICommand> createCommand(std::unique_ptr<las::ui::ICmdParser> parser);
   common::LasCmdOpts getExecutionMode(std::set<common::LasCmdOpts> const& options);
   std::optional<FilenamesVector> getFilenames(FilenamesVector const& filenames);
   std::unique_ptr<ICommand> command;
+  //friend class TestCommandExecutor;
 };
 
 }

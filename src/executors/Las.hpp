@@ -19,6 +19,7 @@ class Las: public ILas
 {
 public:
   Las(int argc);
+  Las(int argc, std::unique_ptr<las::commands::ICommandExecutor> ce);
   void run(std::vector<std::string> const& args) override;
 private:
   std::unique_ptr<las::ui::ICmdParser> parser;

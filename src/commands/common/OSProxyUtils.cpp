@@ -33,9 +33,17 @@ void readFileContent(std::stringstream& contentStream, std::string const& filena
   std::ifstream fileStream{filename};
   if(fileStream)
   {
-    contentStream << fileStream.rdbuf();
-    contentStream << "\n";
+    //contentStream << fileStream.rdbuf();
+    std::string line{};
+    while(std::getline(fileStream, line))
+    {
+      contentStream << (line + "\n");
+    }
     fileStream.close();
+  }
+  else
+  {
+    std::cout<<"ERR::readFileContent file "<<filename<<" not found"<<std::endl;
   }
 }
 
@@ -46,6 +54,10 @@ void writeContentToFile(std::stringstream& contentStream, std::string const& fil
   {
     outFileStream << contentStream.str();
     outFileStream.close();
+  }
+  else
+  {
+    std::cout<<"ERR::writeContentToFile file "<<filename<<" not found"<<std::endl;
   }
 }
 
