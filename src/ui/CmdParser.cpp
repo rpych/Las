@@ -39,14 +39,46 @@ common::LasCmd const CmdParser::getCommand()
   return command;
 }
 
-std::set<common::LasCmdOpts> const& CmdParser::getOptions()
+LasParsedOptions const& CmdParser::getOptions()
 {
-  return options;
+  return lasOptions;
+}
+
+bool CmdParser::recognizeRestoreCmdPart(std::string_view cmdPart)
+{
+  if (cmdPart == "restore")
+  {
+    event = Restore{};
+    state = std::visit(CmdParserSm{*this}, state, event);
+    return true;
+  }
+  else if (cmdPart == "--list")
+  {
+    event = List{};
+    state = std::visit(CmdParserSm{*this}, state, event);
+    return true;
+  }
+  else if (cmdPart == "--show")
+  {
+    event = Show{};
+    state = std::visit(CmdParserSm{*this}, state, event);
+    return true;
+  }
+  else if (cmdPart.substr(0, 2) == "-n")
+  {
+    auto const n{std::stoi(static_cast<std::string>(cmdPart.substr(2)))};
+    event = NthElement{n};
+    state = std::visit(CmdParserSm{*this}, state, event);
+    return true;
+  }
+  return false;
 }
 
 void CmdParser::recognizeCmdPart(std::string_view cmdPart)
 {
-  if (cmdPart == "diff")
+  if (recognizeRestoreCmdPart(cmdPart))
+  { std::cout<<"Restore command part parsed"<<std::endl;}
+  else if (cmdPart == "diff")
   {
     event = Diff{};
     state = std::visit(CmdParserSm{*this}, state, event);
@@ -71,10 +103,15 @@ void CmdParser::recognizeCmdPart(std::string_view cmdPart)
     event = ParallelMode{};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else
+  else if (common::fileExists(static_cast<std::string>(cmdPart)))
   {
     event = Filename{.name=std::string(cmdPart)};
     state = std::visit(CmdParserSm{*this}, state, event);
+  }
+  else
+  {
+    std::cout<<"Unrecognized option or not existing file: "<<cmdPart<<std::endl;
+    return;
   }
   std::cout<<"cmdPart:"<<cmdPart<<", event:"<< event.index()<<std::endl;
 }

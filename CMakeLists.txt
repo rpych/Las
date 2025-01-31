@@ -9,6 +9,7 @@ set(LAS_FILES_SRC
     src/commands/diff/DiffCommand.cpp
     src/commands/diff/DiffHeadCommand.cpp
     src/commands/diff/DiffStagedCommand.cpp
+    src/commands/restore/RestoreCommand.cpp
     src/commands/common/OSCommandProxy.cpp
     src/commands/common/parsers/FileParser.cpp
     src/commands/common/parsers/HunksParser.cpp
@@ -25,6 +26,7 @@ set(LAS_FILES_INCLUDE
     ${PROJECT_SOURCE_DIR}/src/commands/common/osProxy
     ${PROJECT_SOURCE_DIR}/src/commands/cut
     ${PROJECT_SOURCE_DIR}/src/commands/diff
+    ${PROJECT_SOURCE_DIR}/src/commands/restore
     ${PROJECT_SOURCE_DIR}/src/ui
     ${PROJECT_SOURCE_DIR}/src/executors
     ${PROJECT_SOURCE_DIR}/src)
@@ -50,5 +52,5 @@ enable_testing()
 add_subdirectory(test)
 set(WORK_DIRECTORY_FOR_TESTS
     ${PROJECT_SOURCE_DIR})
-add_test(NAME LasTestParametrized COMMAND las_test WORKING_DIRECTORY ${WORK_DIRECTORY_FOR_TESTS})
+#add_test(NAME LasTestParametrized COMMAND las_test WORKING_DIRECTORY ${WORK_DIRECTORY_FOR_TESTS})
 

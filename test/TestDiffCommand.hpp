@@ -1,6 +1,7 @@
 #pragma once
 #include "../src/commands/ICommand.hpp"
 #include "../src/commands/ACommandWrapper.hpp"
+#include "../src/commands/restore/RestoreCommand.hpp"
 
 namespace las::test
 {
@@ -12,6 +13,7 @@ public:
   void runAlgorithm() override
   {
     std::cout<<"runAlgorithm for TEST DIFF command"<<std::endl;
+    RestoreCommand::saveCurrentState();
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_PUSH_STAGED);
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH);
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_APPLY);

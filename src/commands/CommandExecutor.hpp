@@ -6,6 +6,7 @@
 #include "../commands/diff/DiffCommand.hpp"
 #include "../commands/diff/DiffHeadCommand.hpp"
 #include "../commands/diff/DiffStagedCommand.hpp"
+#include "../commands/restore/RestoreCommand.hpp"
 
 namespace las::commands
 {
@@ -26,10 +27,9 @@ public:
 
 protected:
   virtual std::unique_ptr<ICommand> createCommand(std::unique_ptr<las::ui::ICmdParser> parser);
-  common::LasCmdOpts getExecutionMode(std::set<common::LasCmdOpts> const& options);
+  common::LasCmdOpts getExecutionMode(las::ui::LasParsedOptions const& opts);
   std::optional<FilenamesVector> getFilenames(FilenamesVector const& filenames);
   std::unique_ptr<ICommand> command;
-  //friend class TestCommandExecutor;
 };
 
 }

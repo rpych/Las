@@ -15,17 +15,39 @@ class CmdParser;
 //commands
 struct Cut{};
 struct Diff{};
+struct Restore{};
 struct Head{};
 struct Staged{};
 //options
 struct Filename{ std::string name{}; };
 struct ParallelMode{};
+struct List{};
+struct NthElement{ int n{}; };
+struct Show{};
 //states
 struct StateParseCommand{};
 struct StateCommandKnown{};
+struct StateRestoreCommandKnown{};
 struct StateParseFilenames{};
 struct StateParseOtherOptions{};
+struct StateEnd{};
 struct StateInvalid{};
+
+struct LasParsedOptions
+{
+  std::set<common::LasCmdOpts> options{common::LasCmdOpts::SINGLE_MODE};
+  std::optional<int> nthElemOption{}; //for -n option
+
+  bool contains(common::LasCmdOpts opt) const
+  {
+    return options.count(opt) > 0;
+  }
+
+  bool isNthElemOptionValid() const
+  {
+    return nthElemOption.has_value() and *(nthElemOption) < BackupMaxEntries;
+  }
+};
 
 class ICmdParser
 {
@@ -34,15 +56,15 @@ public:
   virtual void parse(std::vector<std::string> const& args) = 0;
   virtual std::vector<std::string> const& getFilenames() = 0;
   virtual common::LasCmd const getCommand() = 0;
-  virtual std::set<common::LasCmdOpts> const& getOptions() = 0;
+  virtual LasParsedOptions const& getOptions() = 0;
   virtual ~ICmdParser() = default;
 };
 
 class CmdParser: public ICmdParser
 {
 public:
-  using CmdState = std::variant<StateParseCommand, StateCommandKnown, StateParseFilenames, StateParseOtherOptions, StateInvalid>;
-  using CmdEvent = std::variant<Cut, Diff, Head, Staged, Filename, ParallelMode>;
+  using CmdState = std::variant<StateParseCommand, StateCommandKnown, StateRestoreCommandKnown, StateParseFilenames, StateParseOtherOptions, StateInvalid>;
+  using CmdEvent = std::variant<Cut, Diff, Restore, Head, Staged, Filename, ParallelMode, List, NthElement, Show>;
 
   struct CmdParserSm
   {
@@ -58,6 +80,11 @@ public:
       parser.command = common::LasCmd::CUT;
       return StateCommandKnown{};
     }
+    CmdState operator()(StateParseCommand&, Restore&)
+    {
+      parser.command = common::LasCmd::RESTORE;
+      return StateRestoreCommandKnown{};
+    }
     CmdState operator()(StateCommandKnown&, Head&)
     {
       if (parser.command == common::LasCmd::DIFF) { parser.command = common::LasCmd::DIFF_HEAD; }
@@ -72,14 +99,36 @@ public:
     }
     CmdState operator()(StateCommandKnown&, ParallelMode&)
     {
-      parser.options.erase(common::LasCmdOpts::SINGLE_MODE);
-      parser.options.emplace(common::LasCmdOpts::PARALLEL_MODE);
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.options.emplace(common::LasCmdOpts::PARALLEL_MODE);
       return StateParseOtherOptions{};
     }
     CmdState operator()(StateCommandKnown&, Filename& file)
     {
       parser.addFilename(file.name);
       return StateParseFilenames{};
+    }
+    CmdState operator()(StateRestoreCommandKnown&, List&)
+    {
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.options.emplace(common::LasCmdOpts::LIST);
+      return StateParseOtherOptions{};
+    }
+    CmdState operator()(StateRestoreCommandKnown&, Show&)
+    {
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.options.emplace(common::LasCmdOpts::SHOW);
+      return StateParseOtherOptions{};
+    }
+    CmdState operator()(StateRestoreCommandKnown&, NthElement& elem)
+    {
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.nthElemOption = std::make_optional<>(elem.n);
+      return StateParseCommand{};
     }
     CmdState operator()(StateParseFilenames&, Filename& file)
     {
@@ -88,9 +137,32 @@ public:
     }
     CmdState operator()(StateParseFilenames&, ParallelMode&)
     {
-      parser.options.erase(common::LasCmdOpts::SINGLE_MODE);
-      parser.options.emplace(common::LasCmdOpts::PARALLEL_MODE);
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.options.emplace(common::LasCmdOpts::PARALLEL_MODE);
       return StateParseOtherOptions{};
+    }
+    CmdState operator()(StateParseOtherOptions&, Filename& file)
+    {
+      //return invalid if restore command
+      parser.addFilename(file.name);
+      return StateParseFilenames{};
+    }
+    CmdState operator()(StateParseOtherOptions&, ParallelMode&)
+    {
+      //return invalid if restore command
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.options.emplace(common::LasCmdOpts::PARALLEL_MODE);
+      return StateParseOtherOptions{};
+    }
+    CmdState operator()(StateParseOtherOptions&, NthElement& elem)
+    {
+      //return invalid if not restore command 
+      auto& lo{parser.lasOptions};
+      lo.options.erase(common::LasCmdOpts::SINGLE_MODE);
+      lo.nthElemOption = std::make_optional<>(elem.n);
+      return StateParseCommand{};
     }
     CmdState operator()(auto&, auto&)
     {
@@ -105,15 +177,16 @@ public:
   void parse(std::vector<std::string> const& args) override;
   std::vector<std::string> const& getFilenames() override;
   common::LasCmd const getCommand() override;
-  std::set<common::LasCmdOpts> const& getOptions() override;
+  LasParsedOptions const& getOptions() override;
 private:
   void recognizeCmdPart(std::string_view cmdPart);
+  bool recognizeRestoreCmdPart(std::string_view cmdPart);
   void addFilename(std::string_view filename);
 
   int argc{};
   std::vector<std::string> inputFilenames{};
   common::LasCmd command{common::LasCmd::INVALID};
-  std::set<common::LasCmdOpts> options{common::LasCmdOpts::SINGLE_MODE};
+  LasParsedOptions lasOptions{};
   CmdState state{StateParseCommand{}};
   CmdEvent event{};
 };

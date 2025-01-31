@@ -38,18 +38,21 @@ std::unique_ptr<ICommand> CommandExecutor::createCommand(std::unique_ptr<las::ui
     case common::LasCmd::DIFF_STAGED:
       return std::make_unique<las::commands::DiffStagedCommand>(params);
       break;
+    case common::LasCmd::RESTORE:
+      return std::make_unique<las::commands::RestoreCommand>(parser->getOptions());
+      break;
     default:
       return nullptr;
   }
 }
 
-common::LasCmdOpts CommandExecutor::getExecutionMode(std::set<common::LasCmdOpts> const& options)
+common::LasCmdOpts CommandExecutor::getExecutionMode(las::ui::LasParsedOptions const& opts)
 {
-  auto foundOption = std::find_if(options.begin(), options.end(), [](auto const option)
+  auto foundOption = std::find_if(opts.options.begin(), opts.options.end(), [](auto const option)
   {
     return (option == common::LasCmdOpts::SINGLE_MODE or option == common::LasCmdOpts::PARALLEL_MODE);
   });
-  return (foundOption != options.end() ? *foundOption : common::LasCmdOpts::INVALID);
+  return (foundOption != opts.options.end() ? *foundOption : common::LasCmdOpts::INVALID);
 }
 
 std::optional<FilenamesVector> CommandExecutor::getFilenames(FilenamesVector const& filenames)

@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iterator>
 #include <iostream>
+#include <sys/stat.h>
 #include "../../Const.hpp"
 
 namespace las::commands::common
@@ -20,6 +21,7 @@ enum class LasCmd
 {
   INVALID,
   CUT,
+  RESTORE,
   DIFF,
   DIFF_HEAD,
   DIFF_STAGED
@@ -30,7 +32,9 @@ enum class LasCmdOpts
   INVALID,
   FILES,
   SINGLE_MODE,
-  PARALLEL_MODE
+  PARALLEL_MODE,
+  LIST,
+  SHOW
 };
 
 enum class GitCmd
@@ -80,6 +84,12 @@ struct LasHunk
     return out<<"Opening::line="<<lh.opComment.line<<" closing::line="<<lh.clComment.line<<"\nsubstContent\n"<<lh.substContent<<std::endl;
   }
 };
+
+inline bool fileExists(std::string const& filename)
+{
+  struct stat st;
+  return (stat(filename.c_str(), &st) == 0);
+}
 
 static std::map<Language, std::shared_ptr<LasLanguage>> predefineLanguages()
 {

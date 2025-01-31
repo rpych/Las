@@ -24,6 +24,7 @@ std::map<GitCmd, std::string> const OSCommandProxy<GitCmd>::initAllowedOsCommand
   osCommands.emplace(GitCmd::GIT_RESET_HARD, "git reset HEAD --hard"s);
   osCommands.emplace(GitCmd::GIT_STASH_DROP, "git stash drop stash@{0}"s);
   osCommands.emplace(GitCmd::GIT_STASH_DROP_1, "git stash drop stash@{1}"s);
+  //osCommands.emplace(GitCmd::GIT_APPLY, "git apply --reject"s);
   return osCommands;
 }
 
