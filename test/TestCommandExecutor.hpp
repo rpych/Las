@@ -14,10 +14,10 @@ public:
 private:
   std::unique_ptr<ICommand> createCommand(std::unique_ptr<las::ui::ICmdParser> parser) override
   {
-    std::cout<<"TestCommandExecutor::createCommand"<<std::endl;
     auto mode{getExecutionMode(parser->getOptions())};
     auto filenames {std::move(getFilenames(parser->getFilenames()))};
     std::unique_ptr<common::AFileParser> fileParser{std::make_unique<common::FileParser>()};
+    std::cout<<"TestCommandExecutor::createCommand filenames exist:"<<filenames.has_value()<<std::endl;
     auto params {CommandParams{.fileParser=std::move(fileParser),
                               .mode=mode,
                               .filenames=filenames}};

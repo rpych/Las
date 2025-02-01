@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <optional>
+#include <algorithm>
 #include <memory>
 #include <utility>
 #include <limits>
@@ -16,6 +17,16 @@
 
 namespace las::commands::common
 {
+
+inline bool rdRestoreEnabled{true};
+
+#define logLasDebug(s, ...)                  \
+{                                            \
+  if defined(LAS_TEST) || defined(LAS_DEBUG) \
+  {                                          \
+    printf(s, __VA_ARGS__);                  \
+  }                                          \
+}                                            \
 
 enum class LasCmd
 {
@@ -47,6 +58,7 @@ enum class GitCmd
   GIT_DIFF_STAGED,
   GIT_STASH,
   GIT_STASH_PUSH_STAGED,
+  GIT_STASH_PUSH_KEEP_INDEX,
   GIT_STASH_APPLY,
   GIT_STASH_APPLY_1,
   GIT_STASH_POP,
@@ -91,6 +103,12 @@ inline bool fileExists(std::string const& filename)
   return (stat(filename.c_str(), &st) == 0);
 }
 
+inline bool isReprNumber(std::string_view lexem)
+{
+  return not lexem.empty() and 
+         std::find_if(lexem.begin(), lexem.end(), [](auto s) { return not std::isdigit(s); }) == lexem.end();
+}
+
 static std::map<Language, std::shared_ptr<LasLanguage>> predefineLanguages()
 {
   std::map<Language, std::shared_ptr<LasLanguage>> opts;
@@ -101,18 +119,16 @@ static std::map<Language, std::shared_ptr<LasLanguage>> predefineLanguages()
 static std::map<Language, std::shared_ptr<LasLanguage>> availableLanguages {predefineLanguages()};
 
 
-inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string_view filenamesBundle)
+inline std::vector<std::string> const getFilenamesFromStatusCmd(std::string const& filenamesBundle)
 {
-  std::stringstream filenamesStream{};
-  filenamesStream << filenamesBundle;
+  std::stringstream filenamesStream{filenamesBundle};
   std::vector<std::string> filenames{};
-  while(filenamesStream)
+  std::string filename{};
+  while(std::getline(filenamesStream, filename))
   {
-    std::string filename{};
-    filenamesStream >> filename;
     if(not filename.empty()) { filenames.push_back(filename); }
+    filename.clear();
   }
-  std::copy(filenames.begin(), filenames.end(), std::ostream_iterator<std::string>(std::cout, ",,"));
   return filenames;
 }
 
@@ -143,6 +159,7 @@ inline std::string const getSubstContentFromRightSide(std::string_view line, std
   auto const linePart{line.substr(markEndIdx)};
   auto const lineEndIdx{linePart.find_last_not_of(" \n\t")};
   std::string substContent{linePart.substr(0, (lineEndIdx != std::string::npos ? lineEndIdx+1 : 0))};
+  substContent = (substContent.length() == 0 ? substContent : (substContent + "\n"));
   return substContent;
 }
 

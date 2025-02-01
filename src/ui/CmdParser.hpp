@@ -53,7 +53,7 @@ class ICmdParser
 {
 public:
   ICmdParser() {};
-  virtual void parse(std::vector<std::string> const& args) = 0;
+  virtual bool parse(std::vector<std::string> const& args) = 0;
   virtual std::vector<std::string> const& getFilenames() = 0;
   virtual common::LasCmd const getCommand() = 0;
   virtual LasParsedOptions const& getOptions() = 0;
@@ -174,12 +174,12 @@ public:
   };
 
   CmdParser(int _argc): argc(_argc) {}
-  void parse(std::vector<std::string> const& args) override;
+  bool parse(std::vector<std::string> const& args) override;
   std::vector<std::string> const& getFilenames() override;
   common::LasCmd const getCommand() override;
   LasParsedOptions const& getOptions() override;
 private:
-  void recognizeCmdPart(std::string_view cmdPart);
+  bool recognizeCmdPart(std::string_view cmdPart);
   bool recognizeRestoreCmdPart(std::string_view cmdPart);
   void addFilename(std::string_view filename);
 

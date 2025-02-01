@@ -35,16 +35,13 @@ private:
   int getAge()
   {
     return age;
-  }
- //^^las end^^
-/*^^las sub begin^^
-  int getAge()
+  } //^^las end^^
+/*^^las sub begin^^  int getAge()
   {
     std::cout<<"Age:"<<age<<std::endl;
     return age;
 
-  }
-  ^^las sub end^^ */
+  }^^las sub end^^ */
 
   void printFunny(int size, std::string s1, std::string s2, std::string s3, std::string s4, std::string s5)
   {

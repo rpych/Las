@@ -5,15 +5,12 @@
 namespace las::ui
 {
 
-void CmdParser::parse(std::vector<std::string> const& args)
+bool CmdParser::parse(std::vector<std::string> const& args)
 {
+  bool parsingResult{true};
   for(int i=1; i < argc; ++i)
   {
-    std::string_view lexem{args.at(i)};
-    std::string lowercasedWord{};
-    std::transform(std::begin(lexem), std::end(lexem), std::back_inserter(lowercasedWord),
-                                      [](auto const c){ return std::tolower(c); });
-    recognizeCmdPart(lowercasedWord);
+    parsingResult = parsingResult and recognizeCmdPart(args.at(i));
   }
   //temp line below
   std::copy(inputFilenames.begin(), inputFilenames.end(), std::ostream_iterator<std::string>(std::cout, ", "));
@@ -25,8 +22,9 @@ void CmdParser::parse(std::vector<std::string> const& args)
   else
   {
     //process chosen files
-    std::cout<<"\nProcess only chosen files size"<<inputFilenames.size()<<std::endl;
+    std::cout<<"\nProcess only chosen files size:"<<inputFilenames.size()<<std::endl;
   }
+  return parsingResult;
 }
 
 std::vector<std::string> const& CmdParser::getFilenames()
@@ -66,7 +64,9 @@ bool CmdParser::recognizeRestoreCmdPart(std::string_view cmdPart)
   }
   else if (cmdPart.substr(0, 2) == "-n")
   {
-    auto const n{std::stoi(static_cast<std::string>(cmdPart.substr(2)))};
+    auto lexem{cmdPart.substr(2)};
+    if (not common::isReprNumber(lexem)) { return false; }
+    auto const n{std::stoi(static_cast<std::string>(lexem))};
     event = NthElement{n};
     state = std::visit(CmdParserSm{*this}, state, event);
     return true;
@@ -74,8 +74,13 @@ bool CmdParser::recognizeRestoreCmdPart(std::string_view cmdPart)
   return false;
 }
 
-void CmdParser::recognizeCmdPart(std::string_view cmdPart)
+bool CmdParser::recognizeCmdPart(std::string_view rawCmdPart)
 {
+  bool result{true};
+  std::string cmdPart{};
+  std::transform(std::begin(rawCmdPart), std::end(rawCmdPart), std::back_inserter(cmdPart),
+                                    [](auto const c){ return std::tolower(c); });
+
   if (recognizeRestoreCmdPart(cmdPart))
   { std::cout<<"Restore command part parsed"<<std::endl;}
   else if (cmdPart == "diff")
@@ -103,17 +108,18 @@ void CmdParser::recognizeCmdPart(std::string_view cmdPart)
     event = ParallelMode{};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
-  else if (common::fileExists(static_cast<std::string>(cmdPart)))
+  else if (common::fileExists(static_cast<std::string>(rawCmdPart)))
   {
-    event = Filename{.name=std::string(cmdPart)};
+    event = Filename{.name=std::string(rawCmdPart)};
     state = std::visit(CmdParserSm{*this}, state, event);
   }
   else
   {
-    std::cout<<"Unrecognized option or not existing file: "<<cmdPart<<std::endl;
-    return;
+    std::cout<<"Unrecognized option or not existing file: "<<rawCmdPart<<std::endl;
+    result = false;
   }
-  std::cout<<"cmdPart:"<<cmdPart<<", event:"<< event.index()<<std::endl;
+  std::cout<<"cmdPart:"<<rawCmdPart<<", event:"<< event.index()<<std::endl;
+  return result;
 }
 
 void CmdParser::addFilename(std::string_view filename)

@@ -13,17 +13,20 @@ public:
   void runAlgorithm() override
   {
     std::cout<<"runAlgorithm for TEST DIFF command"<<std::endl;
-    RestoreCommand::saveCurrentState();
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_PUSH_STAGED);
+    auto const allFilenames(std::move(getAllFilenames(common::GitCmd::GIT_DIFF_HEAD_FILES)));
+    if (allFilenames.size() == 0)
+    {
+      return;
+    }
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH);
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_APPLY);
-    auto const& filenames = (cmdLineFilenames) ? *cmdLineFilenames : std::move(getAllFilenames());
+
+    auto const& filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_FILES)
+                                               : getAllFilenames(common::GitCmd::GIT_DIFF_FILES);
     fileParser->parse(filenames);
     fileWriter->write(fileParser->getFilesHunks());
-    // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF);
-    // osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_RESET_HARD);
+
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_DROP);
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_DROP_1);
   }
 };
 

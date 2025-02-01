@@ -12,10 +12,11 @@ std::map<GitCmd, std::string> const OSCommandProxy<GitCmd>::initAllowedOsCommand
   osCommands.emplace(GitCmd::GIT_DIFF, "git diff"s);
   osCommands.emplace(GitCmd::GIT_DIFF_HEAD_FILES, "git diff HEAD --name-only"s);
   osCommands.emplace(GitCmd::GIT_DIFF_HEAD, "git diff HEAD"s);
-  //osCommands.emplace(GitCmd::GIT_DIFF_STAGED_FILES, "git diff --staged --name-only"s);
-  //osCommands.emplace(GitCmd::GIT_DIFF_STAGED, "git diff --staged"s);
+  osCommands.emplace(GitCmd::GIT_DIFF_STAGED_FILES, "git diff --staged --name-only"s);
+  osCommands.emplace(GitCmd::GIT_DIFF_STAGED, "git diff --staged"s);
   osCommands.emplace(GitCmd::GIT_STASH, "git stash"s); // >/dev/null 2>&1
   osCommands.emplace(GitCmd::GIT_STASH_PUSH_STAGED, "git stash push --staged"s); // >/dev/null 2>&1
+  osCommands.emplace(GitCmd::GIT_STASH_PUSH_KEEP_INDEX, "git stash push --keep-index"s);
   osCommands.emplace(GitCmd::GIT_STASH_APPLY, "git stash apply --index stash@{0}"s);
   osCommands.emplace(GitCmd::GIT_STASH_APPLY_1, "git stash apply --index stash@{1}"s);
   osCommands.emplace(GitCmd::GIT_STASH_POP, "git stash pop"s);

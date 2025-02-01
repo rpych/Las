@@ -16,7 +16,11 @@ Las::Las(int argc, std::unique_ptr<las::commands::ICommandExecutor> ce):
 
 void Las::run(std::vector<std::string> const& args)
 {
-  parser->parse(args);
+  if (not parser->parse(args))
+  {
+    std::cout<<"Problem occurred during parsing"<<std::endl;
+    return;
+  }
   //find command to execute from parsed output
   cmdExecutor->setCommand(std::move(parser));
   cmdExecutor->execute();

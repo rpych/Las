@@ -13,7 +13,13 @@ void CommandExecutor::execute()
 
 void CommandExecutor::setCommand(std::unique_ptr<las::ui::ICmdParser> parser)
 {
+  RestoreCommand::setLasBackupDir();
+  auto const cmdType{parser->getCommand()};
   command = createCommand(std::move(parser));
+  if (cmdType != common::LasCmd::RESTORE)
+  {
+    RestoreCommand::saveCurrentState();
+  }
 }
 
 std::unique_ptr<ICommand> CommandExecutor::createCommand(std::unique_ptr<las::ui::ICmdParser> parser)

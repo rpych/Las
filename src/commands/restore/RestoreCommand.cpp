@@ -1,10 +1,9 @@
 #include "RestoreCommand.hpp"
-#include <functional>
 
 namespace las::commands
 {
 
-RestoreCommand::RestoreCommand(las::ui::LasParsedOptions const& lasOptions): lasOptions(lasOptions)
+RestoreCommand::RestoreCommand(las::ui::LasParsedOptions const lasOptions): lasOptions(lasOptions)
 {}
 
 std::string RestoreCommand::lasBackupDir = "";
@@ -12,8 +11,8 @@ std::string RestoreCommand::lasBackupDir = "";
 void RestoreCommand::runAlgorithm()
 {
   std::cout<<"runAlgorithm for RESTORE command"<<std::endl;
-  std::vector<std::string> backupFilenames{std::move(getListedFiles())};
-  std::sort(backupFilenames.begin(), backupFilenames.end());
+  std::vector<std::string> backupFilenames{getListedFiles()};
+  std::sort(backupFilenames.begin(), backupFilenames.end(), std::greater<std::string>());
   if (lasOptions.contains(common::LasCmdOpts::LIST))
   {
     for (int i=0; i<backupFilenames.size(); ++i)
@@ -24,7 +23,7 @@ void RestoreCommand::runAlgorithm()
   else if(lasOptions.contains(common::LasCmdOpts::SHOW) and lasOptions.isNthElemOptionValid())
   {
     auto const& chosenFilename{backupFilenames.at(lasOptions.nthElemOption.value())};
-    common::executeCommand(std::format("cat {}/{}", RestoreCommand::lasBackupDir, chosenFilename).c_str());
+    common::executeCommand(std::format("cat {}/{} | less", RestoreCommand::lasBackupDir, chosenFilename).c_str());
   }
   else if (lasOptions.isNthElemOptionValid() and lasOptions.options.size() == 0)
   {
@@ -36,12 +35,10 @@ void RestoreCommand::runAlgorithm()
       std::cout<<"Save current changes before running las restore command!"<<std::endl;
       return;
     }
+    std::cout<<"Apply restored patch"<<std::endl;
     auto const& chosenFilename{backupFilenames.at(lasOptions.nthElemOption.value())};
-    //osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_RESET_HARD);
-    //invocation of git apply --reject
-    //common::executeCommand("git reset HEAD --hard");
-    //common::executeCommand(std::format("git apply --reject {}/{}", RestoreCommand::lasBackupDir, chosenFilename).c_str());
-    common::executeCommand(std::format("git apply --check {}/{}", RestoreCommand::lasBackupDir, chosenFilename).c_str());
+    common::executeCommand(std::format("git apply --reject {}/{}", RestoreCommand::lasBackupDir, chosenFilename).c_str());
+    //common::executeCommand(std::format("git apply --check {}/{}", RestoreCommand::lasBackupDir, chosenFilename).c_str());
   }
   else
   {
@@ -51,10 +48,9 @@ void RestoreCommand::runAlgorithm()
 
 void RestoreCommand::saveCurrentState()
 {
-  std::string cmdResult{};
-  common::saveCommandResult("git rev-parse --show-toplevel", cmdResult);
-  auto const rootRepoDir(cmdResult.substr(0, cmdResult.length()-1));
-  RestoreCommand::lasBackupDir = std::format("{}/{}", rootRepoDir, LasHiddenDirectory);
+  if (not common::rdRestoreEnabled) { return; }
+
+  std::cout<<"saveCurrentState"<<std::endl;
   // cmdResult.clear();
   // common::saveCommandResult(std::format("ls -1 {}", lasBackupDir).c_str(), cmdResult);
   // std::cout<<"Files from Restore lasBackupDir:"<<lasBackupDir<<std::endl;
@@ -66,11 +62,9 @@ void RestoreCommand::saveCurrentState()
     std::cout<<"File to remove oldestBackupFilename:"<<std::format("{}/{}", RestoreCommand::lasBackupDir, oldestBackupFilename)<<std::endl;
     common::executeCommand(std::format("rm {}/{}", RestoreCommand::lasBackupDir, oldestBackupFilename).c_str());
   }
-
-  
   //common::executeCommand(std::format("touch {}/{}", RestoreCommand::lasBackupDir, newBackupFile).c_str());
 
-  cmdResult.clear();
+  std::string cmdResult{};
   common::saveCommandResult("git diff HEAD", cmdResult);
   std::stringstream contentStream{cmdResult};
 
@@ -80,6 +74,14 @@ void RestoreCommand::saveCurrentState()
 
   std::cout<<"Time file to write diff:"<<std::format("{}/{}", RestoreCommand::lasBackupDir, newBackupFile)<<std::endl;
   common::writeContentToFile(contentStream, std::format("{}/{}", RestoreCommand::lasBackupDir, newBackupFile));
+}
+
+void RestoreCommand::setLasBackupDir()
+{
+  std::string cmdResult{};
+  common::saveCommandResult("git rev-parse --show-toplevel", cmdResult);
+  auto const rootRepoDir(cmdResult.substr(0, cmdResult.length()-1));
+  RestoreCommand::lasBackupDir = std::format("{}/{}", rootRepoDir, LasHiddenDirectory);
 }
 
 std::vector<std::string> RestoreCommand::getListedFiles()

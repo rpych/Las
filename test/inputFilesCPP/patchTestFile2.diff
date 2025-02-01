@@ -1,0 +1,25 @@
+diff --git a/tmp/inputFilesCPP/testFile2.hpp b/tmp/inputFilesCPP/testFile2.hpp
+index 2d6d5fa..e46ddfb 100644
+--- a/tmp/inputFilesCPP/testFile2.hpp
++++ b/tmp/inputFilesCPP/testFile2.hpp
+@@ -20,6 +20,20 @@ int getMax(int a, int b)
+   return b;
+ }
+ 
++struct Las
++{
++  std::string name{"Las"};
++  int year{2025};
++  void toString()
++  {
++    /*^^las begin^^*/
++  //this is not needed comment
++  /*^^las end^^*/
++    std::cout<<name<<"::"<<year<<std::endl;
++  }
++
++};
++
+ 
+ //^^las begin^^
+ int fun()

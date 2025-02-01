@@ -31,12 +31,14 @@ void executeCommand(char const* cmd)
 void readFileContent(std::stringstream& contentStream, std::string const& filename)
 {
   std::ifstream fileStream{filename};
+  //std::cout<<"readFileContent file:"<<filename<<std::endl;
   if(fileStream)
   {
     //contentStream << fileStream.rdbuf();
     std::string line{};
     while(std::getline(fileStream, line))
     {
+      //std::cout<<"readFileContent line:"<<line<<std::endl;
       contentStream << (line + "\n");
     }
     fileStream.close();
