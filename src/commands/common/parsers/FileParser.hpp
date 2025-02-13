@@ -19,7 +19,7 @@ class AFileParser
 public:
   AFileParser() = default;
   virtual ~AFileParser() = default;
-  virtual void parse(std::vector<std::string> const& filenames) = 0;
+  virtual bool parse(std::vector<std::string> const& filenames) = 0;
   virtual std::unordered_map<std::string, std::vector<LasHunk>> const& getFilesHunks() = 0;
 };
 
@@ -27,13 +27,13 @@ class FileParser: public AFileParser
 {
 public:
   FileParser();
-  void parse(std::vector<std::string> const& filenames) override;
+  bool parse(std::vector<std::string> const& filenames) override;
   std::unordered_map<std::string, std::vector<LasHunk>> const& getFilesHunks() override
   {
     return filesHunks;
   }
 private:
-  void parseFileStream(std::stringstream& s, std::string_view filename);
+  bool parseFileStream(std::stringstream& s, std::string_view filename);
   std::unordered_map<std::string, std::vector<LasHunk>> filesHunks{};
 
 };

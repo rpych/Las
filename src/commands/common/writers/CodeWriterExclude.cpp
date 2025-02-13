@@ -21,13 +21,13 @@ void CodeWriterExclude::write(std::string const& filename,
 void CodeWriterExclude::updateFileContent(std::string const& filename,
                                           std::vector<LasHunk> const& lasHunks)
 {
+  logLasDebug("CodeWriterExclude::updateFileContent filename: {}", filename);
   std::shared_ptr<LasLanguage> lasLang{getLanguage(filename)};
   auto lineNum{1};
   std::string line{};
   while(std::getline(inFileContentStream, line))
   {
     auto matchingLasHunk = getLasHunkContainingLine(lasHunks, lineNum);
-    std::cout<<"CodeWriterExclude::lineNum:"<<lineNum<<", line:"<<line<<std::endl;
     if (not matchingLasHunk)
     {
       line = (isEmptyStream(outFileContentStream) ? "" : "\n") + line;
@@ -39,7 +39,6 @@ void CodeWriterExclude::updateFileContent(std::string const& filename,
       auto& substitutionContent = matchingLasHunk->substContent;
       auto substContentUpdated = (substitutionContent != "") ? substitutionContent.substr(0, (substitutionContent.find_last_not_of("\n") + 1))
                                                              : substitutionContent;
-      std::cout<<"updateFileContent::substContent:"<<matchingLasHunk->substContent<<",size:"<<matchingLasHunk->substContent.length()<<",substContentUpdated:"<<substContentUpdated<<",size:"<<substContentUpdated.length()<<std::endl;
       if (substContentUpdated != "")
       {
         outFileContentStream << (((isEmptyStream(outFileContentStream)) ? "" : "\n") + (substContentUpdated));

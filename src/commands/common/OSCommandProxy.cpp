@@ -14,18 +14,20 @@ std::map<GitCmd, std::string> const OSCommandProxy<GitCmd>::initAllowedOsCommand
   osCommands.emplace(GitCmd::GIT_DIFF_HEAD, "git diff HEAD"s);
   osCommands.emplace(GitCmd::GIT_DIFF_STAGED_FILES, "git diff --staged --name-only"s);
   osCommands.emplace(GitCmd::GIT_DIFF_STAGED, "git diff --staged"s);
-  osCommands.emplace(GitCmd::GIT_STASH, "git stash"s); // >/dev/null 2>&1
-  osCommands.emplace(GitCmd::GIT_STASH_PUSH_STAGED, "git stash push --staged"s); // >/dev/null 2>&1
-  osCommands.emplace(GitCmd::GIT_STASH_PUSH_KEEP_INDEX, "git stash push --keep-index"s);
-  osCommands.emplace(GitCmd::GIT_STASH_APPLY, "git stash apply --index stash@{0}"s);
-  osCommands.emplace(GitCmd::GIT_STASH_APPLY_1, "git stash apply --index stash@{1}"s);
-  osCommands.emplace(GitCmd::GIT_STASH_POP, "git stash pop"s);
-  osCommands.emplace(GitCmd::GIT_STASH_POP_INDEX, "git stash pop --index"s);
-  osCommands.emplace(GitCmd::GIT_STASH_POP_INDEX_1, "git stash pop --index stash@{1}"s);
-  osCommands.emplace(GitCmd::GIT_RESET_HARD, "git reset HEAD --hard"s);
-  osCommands.emplace(GitCmd::GIT_STASH_DROP, "git stash drop stash@{0}"s);
-  osCommands.emplace(GitCmd::GIT_STASH_DROP_1, "git stash drop stash@{1}"s);
-  //osCommands.emplace(GitCmd::GIT_APPLY, "git apply --reject"s);
+  osCommands.emplace(GitCmd::GIT_STASH, "git stash &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_PUSH_STAGED, "git stash push --staged &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_PUSH_KEEP_INDEX, "git stash push --keep-index &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_APPLY, "git stash apply --index stash@{0} &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_APPLY_1, "git stash apply --index stash@{1} &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_POP, "git stash pop &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_POP_INDEX, "git stash pop --index &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_POP_INDEX_1, "git stash pop --index stash@{1} &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_RESET_HARD, "git reset HEAD --hard &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STATUS, "git status"s);
+  osCommands.emplace(GitCmd::GIT_STASH_DROP, "git stash drop stash@{0} &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_STASH_DROP_1, "git stash drop stash@{1} &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_APPLY_INDEX, "git apply --index &>/dev/null"s);
+  osCommands.emplace(GitCmd::GIT_APPLY, "git apply &>/dev/null"s);
   return osCommands;
 }
 
@@ -69,7 +71,41 @@ void OSCommandProxy<T>::executeOsCommandNotSave(T command)
   osUtils::executeCommand(cmdPhrase);
 }
 
+template<typename T>
+void OSCommandProxy<T>::executeOsCommandNotSave(T command,
+                                                std::vector<std::string> const& files)
+{
+  namespace osUtils = las::commands::common;
+  clearOsCommand();
+  std::string filesCombined{};
+  for (auto const& f: files)
+  {
+    filesCombined += (" " + f);
+  }
+  std::string const& s  = static_cast<std::string>(allowedOsCommands.at(command));
+  auto const finalCmd{(s + filesCombined)};
+  char const* cmdPhrase = (finalCmd).c_str();
+  osUtils::executeCommand(cmdPhrase);
+}
 
+template<typename T>
+void OSCommandProxy<T>::executeOsCommandWithFile(T command, std::string const& file, RepoState state)
+{
+  namespace osUtils = las::commands::common;
+  clearOsCommand();
+  std::string const& s  = static_cast<std::string>(allowedOsCommands.at(command));
+  std::string finalCmd{""};
+  if (state == RepoState::SAVE)
+  {
+    finalCmd = std::format("{} > {}", s, file);
+  }
+  else if (state == RepoState::ROLLBACK)
+  {
+    finalCmd = std::format("{} {}", s, file);
+  }
+  char const* cmdPhrase = finalCmd.c_str();
+  osUtils::executeCommand(cmdPhrase);
+}
 
 template class OSCommandProxy<GitCmd>;
 

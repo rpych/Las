@@ -12,7 +12,7 @@ void FileWriter::write(std::unordered_map<std::string, std::vector<LasHunk>>cons
   std::for_each(filesHunks.begin(), filesHunks.end(), [&codeWriter](auto const& hunkInfo)
   {
     auto const& [filename, hunks] = hunkInfo;
-    std::cout<<"FILE WRITER: "<<filename<<std::endl;
+    logLasDebug("FileWriter::write filename: {}", filename);
     codeWriter->write(filename, hunks);
   });
 }

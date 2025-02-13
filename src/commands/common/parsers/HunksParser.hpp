@@ -17,10 +17,8 @@ class HunksParser
 {
 public:
   HunksParser(std::shared_ptr<LasLanguage> lasLang) : lpSm(lasLang) {}
-  void parseForHunks(std::stringstream& s);
-  std::vector<LasHunk> getHunks() const { 
-    std::cout<<"RPY::getHunks::size:"<<lpSm.hunks.size()<<std::endl;
-    return lpSm.hunks; };
+  bool parseForHunks(std::stringstream& s);
+  std::vector<LasHunk> getHunks() const { return lpSm.hunks; };
 
 private:
   LasParserSmManager lpSm;

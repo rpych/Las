@@ -6,7 +6,7 @@ namespace executors = las::executors;
 
 int main(int argc, const char* argv[])
 {
-  std::cout<<"Hello from LAS (Log, Analyze and Share system) app"<<std::endl;
+  std::cout<<"LAS (Log, Analyze and Share) app"<<std::endl;
   std::vector<std::string> args;
   for (int i=0; i<argc; ++i)
   {

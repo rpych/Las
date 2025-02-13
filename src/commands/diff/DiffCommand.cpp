@@ -9,23 +9,27 @@ DiffCommand::DiffCommand(CommandParams& params): ACommandWrapper(params)
 
 void DiffCommand::runAlgorithm()
 {
-  std::cout<<"runAlgorithm for DIFF command"<<std::endl;
+  std::cout<<"Run las diff command"<<std::endl;
   auto const allFilenames(std::move(getAllFilenames(common::GitCmd::GIT_DIFF_HEAD_FILES)));
   if (allFilenames.size() == 0)
   {
     return;
   }
-  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH);
-  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_APPLY);
+  osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_DIFF_STAGED, RestoreCommand::cmdStagedAreaBackup, common::RepoState::SAVE);
+  osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_DIFF, RestoreCommand::cmdWorkAreaBackup, common::RepoState::SAVE);
 
-  auto const& filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_FILES)
-                                             : getAllFilenames(common::GitCmd::GIT_DIFF_FILES);
-  fileParser->parse(filenames);
-  fileWriter->write(fileParser->getFilesHunks());
+  auto const filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_FILES)
+                                            : getAllFilenames(common::GitCmd::GIT_DIFF_FILES);
+  if (fileParser->parse(filenames))
+  {
+    fileWriter->write(fileParser->getFilesHunks());
+  }
 
-  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF);
+  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF, filenames);
   osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_RESET_HARD);
-  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_POP_INDEX);
+
+  osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_APPLY_INDEX, RestoreCommand::cmdStagedAreaBackup, common::RepoState::ROLLBACK);
+  osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_APPLY, RestoreCommand::cmdWorkAreaBackup, common::RepoState::ROLLBACK);
 }
 
 }

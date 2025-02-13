@@ -43,6 +43,7 @@ target_compile_features(language_req INTERFACE cxx_std_20)
 
 
 target_link_libraries(las PUBLIC language_req)
+#target_compile_definitions(las PUBLIC LAS_DEBUG)
 
 add_library(las_lib STATIC ${LAS_FILES_INCLUDE} ${LAS_FILES_SRC} )
 
@@ -52,5 +53,5 @@ enable_testing()
 add_subdirectory(test)
 set(WORK_DIRECTORY_FOR_TESTS
     ${PROJECT_SOURCE_DIR})
-#add_test(NAME LasTestParametrized COMMAND las_test WORKING_DIRECTORY ${WORK_DIRECTORY_FOR_TESTS})
+add_test(NAME LasTestParametrized COMMAND las_test WORKING_DIRECTORY ${WORK_DIRECTORY_FOR_TESTS})
 

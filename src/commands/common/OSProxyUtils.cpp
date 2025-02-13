@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../../Const.hpp"
 
 namespace las::commands::common
 {
@@ -18,39 +19,42 @@ void saveCommandResult(char const* cmd, std::string& result)
   while (fgets(line.data(), line.size(), cmdPipe.get()) != nullptr)
   {
     result += line.data();
-    std::cout<<line.data();
   }
 }
 
 void executeCommand(char const* cmd)
 {
-  std::cout<<"executeCommand: "<<cmd<<std::endl;
-  system(cmd);
+  logLasDebug("executeCommand: {}", cmd);
+  FILE* f = popen(cmd, "w");
+  if (f)
+  {
+    fputs(" ", f);
+  }
+  pclose(f);
 }
 
 void readFileContent(std::stringstream& contentStream, std::string const& filename)
 {
+  logLasDebug("readFileContent: {}", filename);
   std::ifstream fileStream{filename};
-  //std::cout<<"readFileContent file:"<<filename<<std::endl;
   if(fileStream)
   {
-    //contentStream << fileStream.rdbuf();
     std::string line{};
     while(std::getline(fileStream, line))
     {
-      //std::cout<<"readFileContent line:"<<line<<std::endl;
       contentStream << (line + "\n");
     }
     fileStream.close();
   }
   else
   {
-    std::cout<<"ERR::readFileContent file "<<filename<<" not found"<<std::endl;
+    logLasError("Error: file {} not found when trying to read", filename);
   }
 }
 
 void writeContentToFile(std::stringstream& contentStream, std::string const& filename)
 {
+  logLasDebug("writeContentToFile: {}", filename);
   std::ofstream outFileStream{filename};
   if(outFileStream)
   {
@@ -59,7 +63,7 @@ void writeContentToFile(std::stringstream& contentStream, std::string const& fil
   }
   else
   {
-    std::cout<<"ERR::writeContentToFile file "<<filename<<" not found"<<std::endl;
+    logLasError("Error: file {} not found when trying to write", filename);
   }
 }
 

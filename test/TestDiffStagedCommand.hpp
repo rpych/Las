@@ -26,8 +26,10 @@ public:
 
     auto const& filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_STAGED_FILES)
                                                : getAllFilenames(common::GitCmd::GIT_DIFF_STAGED_FILES);
-    fileParser->parse(filenames);
-    fileWriter->write(fileParser->getFilesHunks());
+    if (fileParser->parse(filenames))
+    {
+      fileWriter->write(fileParser->getFilesHunks());
+    }
 
     for (auto const& f: filenamesWorkArea)
     {

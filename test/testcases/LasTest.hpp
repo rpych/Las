@@ -47,9 +47,6 @@ public:
   void setup(std::vector<std::string> const& inputDirsToCopy,
              std::vector<std::string> const& filenamesToCheck)
   {
-    std::string result1{};
-    executeOsCommandWithResult("pwd", result1);
-    std::cout<<"RPY::from CheckLasHunksHandling test, result:"<<result1<<std::endl;
     executeOsCommandWithoutResult(std::format("rm -rf {}", TEST_EXEC_ROOT_DIR));
     for (auto const& dir: inputDirsToCopy)
     {
@@ -94,51 +91,16 @@ public:
   void SetUp() override
   {
     auto const param = GetParam();
-    lasApp = (param.isTestCmdExecutor)
-              ? std::make_unique<Las>(param.argc,
-                                      std::make_unique<TestCommandExecutor>())
-              : std::make_unique<Las>(param.argc);
+    lasApp = std::make_unique<Las>(param.argc,
+                                   std::make_unique<TestCommandExecutor>());
     LasTestBase::setup(param.inputDirsToCopy, param.filenamesToCheck);
-    // std::string result1{};
-    // executeOsCommandWithResult("pwd", result1);
-    // std::cout<<"RPY::from CheckLasHunksHandling test, result:"<<result1<<std::endl;
-    // executeOsCommandWithoutResult(std::format("rm -rf {}", TEST_EXEC_ROOT_DIR));
-    // for (auto const& dir: param.inputDirsToCopy)
-    // {
-    //   executeOsCommandWithoutResult(std::format("mkdir -p {}/{}", TEST_EXEC_ROOT_DIR, dir));
-    //   executeOsCommandWithoutResult(std::format("git add {}/{}", TEST_EXEC_ROOT_DIR, dir));
-    // }
-
-    // for (auto const& f: param.filenamesToCheck)
-    // {
-    //   auto const createFileCommand{std::format("touch {}/{}", TEST_EXEC_ROOT_DIR, f)};
-    //   executeOsCommandWithoutResult(createFileCommand);
-    //   auto const gitAddFileCommand{std::format("git add {}/{}", TEST_EXEC_ROOT_DIR, f)};
-    //   executeOsCommandWithoutResult(gitAddFileCommand);
-    //   std::stringstream contentStream{};
-    //   auto const destFilenamePath{std::format("{}/{}", TEST_EXEC_ROOT_DIR, f)};
-    //   auto const sourceFilenamePath{std::format("{}/{}", TEST_ROOT_DIR, f)};
-    //   readTestFileContent(contentStream, sourceFilenamePath);
-    //   writeTestFileContent(contentStream, destFilenamePath);
-    // }
-    // std::string result{};
-    // executeOsCommandWithResult("git status -v tmp/inputFiles/", result);
   }
 
   void TearDown() override
   {
     std::cout<<"TearDown invoked"<<std::endl;
     LasTestBase::teardown();
-    // lasApp.reset();
-    // executeOsCommandWithoutResult(std::format("git restore --staged {}", TEST_EXEC_ROOT_DIR));
-    //executeOsCommandWithoutResult(std::format("rm -rf {}", TEST_EXEC_ROOT_DIR));
   }
-
-// protected:
-//   void checkLasSystemBehaviour(std::vector<std::string> const& filenamesToCheck, std::vector<std::string> const& modelFilenames);
-//   bool compareFilesContent(std::stringstream& testContent, std::stringstream& modelContent);
-
-//   std::unique_ptr<Las> lasApp;
 };
 
 
@@ -176,7 +138,5 @@ public:
     LasTestBase::teardown();
   }
 };
-
-
 
 }

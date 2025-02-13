@@ -7,30 +7,35 @@ namespace las::commands::common
 FileParser::FileParser(): filesHunks{}
 {}
 
-void FileParser::parse(std::vector<std::string> const& filenames)
+bool FileParser::parse(std::vector<std::string> const& filenames)
 {
-  std::cout<<"FileParser::parse"<<std::endl;
-  std::for_each(filenames.begin(), filenames.end(), [this](auto const& f)
+  logLasDebug("FileParser::parse");
+  bool result{true};
+  std::for_each(filenames.begin(), filenames.end(), [this, &result](auto const& f)
   {
     std::stringstream fileStream{};
     readFileContent(fileStream, f);
-    parseFileStream(fileStream, f);
+    if (not parseFileStream(fileStream, f)) { result = false; }
   });
+  return result;
 }
 
-void FileParser::parseFileStream(std::stringstream& s, std::string_view filename)
+bool FileParser::parseFileStream(std::stringstream& s, std::string_view filename)
 {
-  std::cout<<"FileParser::parseFileStream filename:"<<filename<<", len: "<<filename.length()<<std::endl;
+  logLasDebug("FileParser::parseFileStream filename: {}", filename);
   std::shared_ptr<LasLanguage> lasLang{getLanguage(filename)};
   HunksParser hunksParser{lasLang};
-  hunksParser.parseForHunks(s);
+  if (not hunksParser.parseForHunks(s))
+  {
+    logLasError("Above problem in file: {}", filename);
+    return false;
+  }
   auto hunks = std::move(hunksParser.getHunks());
-  std::copy(hunks.begin(), hunks.end(), std::ostream_iterator<LasHunk>(std::cout));
   if (hunks.size() > 0)
   {
-    std::cout<<"RPY::getHunks>0::"<<std::endl;
     filesHunks.emplace(filename, hunks);
   }
+  return true;
 }
 
 }

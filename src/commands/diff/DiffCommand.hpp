@@ -1,6 +1,7 @@
 #pragma once
 #include "../ICommand.hpp"
 #include "../ACommandWrapper.hpp"
+#include "../restore/RestoreCommand.hpp"
 
 namespace las::commands
 {

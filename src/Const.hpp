@@ -1,11 +1,25 @@
 #pragma once
 #include <string>
+#include <format>
 
 namespace las
 {
 
-const inline std::string LasHiddenDirectory{".las_directory"};
+const inline std::string LasStateBackupDir{".las_directory/backup"};
+const inline std::string StagedAreaFilesBackup{".las_directory/areas/CmdStagedAreaBackup.diff"};
+const inline std::string WorkAreaFilesBackup{".las_directory/areas/CmdWorkAreaBackup.diff"};
 constexpr inline uint16_t BackupMaxEntries{4}; 
+
+  #ifdef LAS_DEBUG
+    #define logLasDebug(s, ...) \
+      std::cout<<std::format(s __VA_OPT__(,) __VA_ARGS__)<<std::endl;
+  #else
+    #define logLasDebug(s, ...)
+  #endif
+
+  #define logLasError(s, ...) \
+    std::cerr<<std::format(s __VA_OPT__(,) __VA_ARGS__)<<std::endl;
+
 
   #define __GIT_VCS__ 1
   #ifdef  __GIT_VCS__

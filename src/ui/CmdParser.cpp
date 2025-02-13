@@ -12,18 +12,6 @@ bool CmdParser::parse(std::vector<std::string> const& args)
   {
     parsingResult = parsingResult and recognizeCmdPart(args.at(i));
   }
-  //temp line below
-  std::copy(inputFilenames.begin(), inputFilenames.end(), std::ostream_iterator<std::string>(std::cout, ", "));
-  if (inputFilenames.size() == 0)
-  {
-    //process all touched files
-    std::cout<<"\nProcess all touched files"<<std::endl;
-  }
-  else
-  {
-    //process chosen files
-    std::cout<<"\nProcess only chosen files size:"<<inputFilenames.size()<<std::endl;
-  }
   return parsingResult;
 }
 
@@ -82,7 +70,9 @@ bool CmdParser::recognizeCmdPart(std::string_view rawCmdPart)
                                     [](auto const c){ return std::tolower(c); });
 
   if (recognizeRestoreCmdPart(cmdPart))
-  { std::cout<<"Restore command part parsed"<<std::endl;}
+  {
+    logLasDebug("Restore command part parsed");
+  }
   else if (cmdPart == "diff")
   {
     event = Diff{};
@@ -115,10 +105,15 @@ bool CmdParser::recognizeCmdPart(std::string_view rawCmdPart)
   }
   else
   {
-    std::cout<<"Unrecognized option or not existing file: "<<rawCmdPart<<std::endl;
+    logLasError("Unrecognized option or not existing file: {}.\n See las --help", rawCmdPart);
     result = false;
   }
-  std::cout<<"cmdPart:"<<rawCmdPart<<", event:"<< event.index()<<std::endl;
+
+  if (std::holds_alternative<StateInvalid>(state))
+  {
+    result = false;
+  }
+  logLasDebug("cmdPart:{}, event:{}", rawCmdPart, event.index())
   return result;
 }
 

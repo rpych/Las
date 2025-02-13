@@ -14,6 +14,11 @@ class AOSCommandProxy
 public:
   virtual std::string const& executeOsCommand(T command) = 0;
   virtual void executeOsCommandNotSave(T command) = 0;
+  virtual void executeOsCommandNotSave(T command,
+                                       std::vector<std::string> const& files) = 0;
+  virtual void executeOsCommandWithFile(T command,
+                                        std::string const& file,
+                                        RepoState state) = 0;
   virtual ~AOSCommandProxy() = default;
 };
 
@@ -24,6 +29,11 @@ public:
   OSCommandProxy(): allowedOsCommands{initAllowedOsCommands()} {};
   std::string const& executeOsCommand(T command) override;
   void executeOsCommandNotSave(T command) override;
+  virtual void executeOsCommandNotSave(T command,
+                                       std::vector<std::string> const& files) override;
+  virtual void executeOsCommandWithFile(T command,
+                                        std::string const& file,
+                                        RepoState state) override;
 private:
   std::string const& getOsCommandResult();
   void clearOsCommand();

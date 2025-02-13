@@ -30,7 +30,6 @@ protected:
 
   FilenamesVector const getAllFilenames(common::GitCmd cmd)
   {
-    std::cout<<"getAllFilenames:"<<std::endl;
     auto const filenamesBundle = osCommandProxy->executeOsCommand(cmd);
     return common::getFilenamesFromStatusCmd(filenamesBundle);
   }
@@ -40,7 +39,6 @@ protected:
     auto const filenamesBundle = osCommandProxy->executeOsCommand(cmd);
     auto const availFilenames{std::move(common::getFilenamesFromStatusCmd(filenamesBundle))};
     std::vector<std::string> filtered;
-    std::cout<<"getFilteredFilenames availFilenames size:"<<availFilenames.size()<<std::endl;
     if (cmdLineFilenames)
     {
       auto const cmdPresentFilenames{*cmdLineFilenames};
@@ -48,11 +46,9 @@ protected:
       [&availFilenames](std::string const& f)
       {
         auto res = std::find(availFilenames.begin(), availFilenames.end(), f) != availFilenames.end();
-        std::cout<<"Filename found in copy_if:"<<f<<", res:"<<res<<std::endl;
         return res;
       });
     }
-    std::cout<<"Filtered size:"<<filtered.size()<<std::endl;
     return filtered;
   }
 

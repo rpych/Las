@@ -35,18 +35,18 @@ public:
 
     LasParserState operator()(NormalArea&, NormalLineEvent&)
     {
-      std::cout<<"NormalArea and NormalLineEvent: "<<sm.line;
+      logLasDebug("NormalArea and NormalLineEvent: {}", sm.line);
       return NormalArea{};
     }
     LasParserState operator()(NormalArea&, HunkBeginEvent&)
     {
-      std::cout<<"parseForHunks::containsLasIndOpen with "<<sm.line;
+      logLasDebug("NormalArea and HunkBeginEvent: {}", sm.line);
       sm.commIndicators.push(LasComment{Comment::OPENING, sm.lineNum});
       return HunkArea{};
     }
     LasParserState operator()(NormalArea&, HunkSingleEvent&)
     {
-      std::cout<<"NormalArea and HunkSingleEvent: "<<sm.line;
+      logLasDebug("NormalArea and HunkSingleEvent: {}", sm.line);
       std::string substContent {std::move(getSubstContentFromRightSide(sm.line, sm.lang->LAS_SINGLE))};
       sm.hunks.push_back(LasHunk{.substContent=substContent, .opComment=LasComment{Comment::OPENING, sm.lineNum},
                                                              .clComment=LasComment{Comment::CLOSING, sm.lineNum}});
@@ -55,22 +55,22 @@ public:
     }
     LasParserState operator()(HunkArea&, NormalLineEvent&)
     {
-      std::cout<<"HunkArea and NormalLineEvent: "<<sm.line;
+      logLasDebug("HunkArea and NormalLineEvent: {}", sm.line);
       return HunkArea{};
     }
     LasParserState operator()(HunkArea&, HunkEndEvent&)
     {
-      std::cout<<"HunkArea and HunkEndEvent: "<<sm.line;
+      logLasDebug("HunkArea and HunkEndEvent: {}", sm.line);
       if (sm.commIndicators.empty())
       {
-        std::cout<<"Any opening LAS comment does not exist in the file"<<std::endl;
+        logLasError("Any opening LAS comment does not exist in the file: {}", sm.line);
         return InvalidArea{};
       }
       auto const& openingComment = sm.commIndicators.top();
       sm.commIndicators.pop();
       if (openingComment.comment != Comment::OPENING)
       {
-        std::cout<<"Lacking LAS opening comment for LAS closing comment "<<std::endl;
+        logLasError("Lacking LAS opening comment for LAS closing comment: {}", sm.line);
         return InvalidArea{};
       }
       sm.hunks.push_back(LasHunk{.opComment=openingComment, .clComment=LasComment{Comment::CLOSING, sm.lineNum}});
@@ -78,26 +78,26 @@ public:
     }
     LasParserState operator()(HunkSubstAreaPossible&, NormalLineEvent&)
     {
-      std::cout<<"HunkSubstAreaPossible and NormalLineEvent: "<<sm.line;
+      logLasDebug("HunkSubstAreaPossible and NormalLineEvent: {}", sm.line);
       return NormalArea{};
     }
     LasParserState operator()(HunkSubstAreaPossible&, HunkSubstBeginEvent&)
     {
-      std::cout<<"HunkSubstAreaPossible and HunkSubstBeginEvent: "<<sm.line;
+      logLasDebug("HunkSubstAreaPossible and HunkSubstBeginEvent: {}", sm.line);
       std::string substContent {std::move(getSubstContentFromRightSide(sm.line, sm.lang->LAS_SUBST_BEGIN))};
       sm.substContent += substContent;
       return HunkSubstArea{};
     }
     LasParserState operator()(HunkSubstArea&, NormalLineEvent&)
     {
-      std::cout<<"HunkSubstArea and NormalLineEvent: "<<sm.line;
+      logLasDebug("HunkSubstArea and NormalLineEvent: {}", sm.line);
       std::string substContent {std::move(getNormalLineSubstContent(sm.line, sm.lang->COMMENT))};
       sm.substContent += substContent;
       return HunkSubstArea{};
     }
     LasParserState operator()(HunkSubstArea&, HunkSubstEndEvent&)
     {
-      std::cout<<"HunkSubstArea and HunkSubstEndEvent: "<<sm.line;
+      logLasDebug("HunkSubstArea and HunkSubstEndEvent: {}", sm.line);
       std::string substContent {std::move(getSubstContentFromLeftSide(sm.line, sm.lang->LAS_SUBST_END, sm.lang->COMMENT))};
       sm.substContent += substContent;
       auto& lastHunk = sm.hunks.back();
@@ -108,7 +108,7 @@ public:
     }
     LasParserState operator()(auto&, auto&)
     {
-      std::cout<<"InvalidArea: "<<sm.line<<std::endl;
+      logLasDebug("InvalidArea: {}", sm.line);
       return InvalidArea{};
     }
   };
@@ -131,7 +131,7 @@ public:
     currentState = std::visit(LasParserSm{*this}, currentState, currentEvent);
     if (std::holds_alternative<InvalidArea>(currentState))
     {
-      std::cout<<"ERROR when parsing LAS HUNK:: lineNum:"<<lineNum<<", line: "<<line<<std::endl;
+      logLasError("Error when parsing LAS hunk in line {}:{}", lineNum, line);
       return false;
     }
     return true;

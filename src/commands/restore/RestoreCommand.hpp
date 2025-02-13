@@ -24,6 +24,8 @@ public:
   static void saveCurrentState();
   static void setLasBackupDir();
   static std::string lasBackupDir;
+  static std::string cmdStagedAreaBackup;
+  static std::string cmdWorkAreaBackup;
 private:
   static std::vector<std::string> getListedFiles();
 

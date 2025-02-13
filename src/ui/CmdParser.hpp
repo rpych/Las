@@ -88,13 +88,13 @@ public:
     CmdState operator()(StateCommandKnown&, Head&)
     {
       if (parser.command == common::LasCmd::DIFF) { parser.command = common::LasCmd::DIFF_HEAD; }
-      else { std::cout<<"Error.\"HEAD\" used with wrong command name!"<<std::endl; }
+      else { logLasError("Error: \"HEAD\" used with wrong command name!"); }
       return StateParseFilenames{};
     }
     CmdState operator()(StateCommandKnown&, Staged&)
     {
       if (parser.command == common::LasCmd::DIFF) { parser.command = common::LasCmd::DIFF_STAGED; }
-      else { std::cout<<"Error.\"staged\" used with wrong command name!"<<std::endl; }
+      else { logLasError("Error: \"staged\" used with wrong command name!"); }
       return StateParseFilenames{};
     }
     CmdState operator()(StateCommandKnown&, ParallelMode&)
@@ -166,7 +166,7 @@ public:
     }
     CmdState operator()(auto&, auto&)
     {
-      std::cout<<"Error.Wrong las command name or option used!"<<std::endl;
+      logLasError("Error! Wrong las command name or option used!");
       return StateInvalid{};
     }
 

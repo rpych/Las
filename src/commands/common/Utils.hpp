@@ -20,13 +20,11 @@ namespace las::commands::common
 
 inline bool rdRestoreEnabled{true};
 
-#define logLasDebug(s, ...)                  \
-{                                            \
-  if defined(LAS_TEST) || defined(LAS_DEBUG) \
-  {                                          \
-    printf(s, __VA_ARGS__);                  \
-  }                                          \
-}                                            \
+enum class RepoState
+{
+  SAVE,
+  ROLLBACK
+};
 
 enum class LasCmd
 {
@@ -66,7 +64,10 @@ enum class GitCmd
   GIT_STASH_POP_INDEX_1,
   GIT_RESET_HARD,
   GIT_STASH_DROP,
-  GIT_STASH_DROP_1
+  GIT_STASH_DROP_1,
+  GIT_STATUS,
+  GIT_APPLY_INDEX,
+  GIT_APPLY
 };
 
 enum class Comment
@@ -137,7 +138,7 @@ inline std::string const getParsedFileExtension(std::string_view filename)
   auto const fileExtensionIdx{filename.find_last_of(".")};
   if (fileExtensionIdx == std::string::npos)
   {
-    std::cout<<"Error::file without extension!"<<std::endl;
+    logLasError("Error::file: {} without extension!", filename);
   }
   auto const fileExtension{filename.substr(fileExtensionIdx+1)};
   return static_cast<std::string>(fileExtension);

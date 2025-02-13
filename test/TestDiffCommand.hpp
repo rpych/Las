@@ -23,8 +23,10 @@ public:
 
     auto const& filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_FILES)
                                                : getAllFilenames(common::GitCmd::GIT_DIFF_FILES);
-    fileParser->parse(filenames);
-    fileWriter->write(fileParser->getFilesHunks());
+    if (fileParser->parse(filenames))
+    {
+      fileWriter->write(fileParser->getFilesHunks());
+    }
 
     osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_DROP);
   }

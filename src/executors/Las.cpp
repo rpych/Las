@@ -18,7 +18,7 @@ void Las::run(std::vector<std::string> const& args)
 {
   if (not parser->parse(args))
   {
-    std::cout<<"Problem occurred during parsing"<<std::endl;
+    logLasError("Problem occurred when parsing input parameters");
     return;
   }
   //find command to execute from parsed output
