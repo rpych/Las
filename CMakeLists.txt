@@ -48,6 +48,7 @@ target_link_libraries(las PUBLIC language_req)
 add_library(las_lib STATIC ${LAS_FILES_INCLUDE} ${LAS_FILES_SRC} )
 
 target_compile_features(las_lib PRIVATE cxx_std_20)
+target_compile_definitions(las_lib PUBLIC LAS_DEBUG)
 
 enable_testing()
 add_subdirectory(test)

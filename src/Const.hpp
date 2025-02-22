@@ -30,7 +30,9 @@ constexpr inline uint16_t BackupMaxEntries{4};
   {
     CPP,
     ELIXIR,
-    PYTHON
+    PYTHON,
+    JAVA,
+    DEFAULT
   };
 
   struct LasLanguage
@@ -55,6 +57,30 @@ constexpr inline uint16_t BackupMaxEntries{4};
   {
     LasCpp() : LasLanguage(COMMENT) {}
     static inline const std::string COMMENT{"//"};
+  };
+
+  struct LasElixir : public LasLanguage
+  {
+    LasElixir() : LasLanguage(COMMENT) {}
+    static inline const std::string COMMENT{"#"};
+  };
+
+  struct LasPython : public LasLanguage
+  {
+    LasPython() : LasLanguage(COMMENT) {}
+    static inline const std::string COMMENT{"#"};
+  };
+
+  struct LasJava : public LasLanguage
+  {
+    LasJava() : LasLanguage(COMMENT) {}
+    static inline const std::string COMMENT{"//"};
+  };
+
+  struct LasDefault : public LasLanguage
+  {
+    LasDefault() : LasLanguage(COMMENT) {}
+    static inline const std::string COMMENT{"#"};
   };
   
 }

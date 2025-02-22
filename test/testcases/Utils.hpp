@@ -6,10 +6,16 @@
 
 namespace las::test
 {
-
+//CPP
 const std::string INPUT_TEST_FILES_DIR_CPP{"inputFilesCPP"};
 const std::string MODEL_TEST_FILES_DIR_CPP{"modelFilesCPP"};
-
+//Elixir
+const std::string INPUT_TEST_FILES_DIR_ELIXIR{"inputFilesElixir"};
+const std::string MODEL_TEST_FILES_DIR_ELIXIR{"modelFilesElixir"};
+//Python
+const std::string INPUT_TEST_FILES_DIR_PYTHON{"inputFilesPython"};
+const std::string MODEL_TEST_FILES_DIR_PYTHON{"modelFilesPython"};
+//CPP
 const std::string TEST_FILE1_CPP{"inputFilesCPP/testFile1.cpp"};
 const std::string TEST_FILE2_CPP{"inputFilesCPP/testFile2.hpp"};
 const std::string TEST_FILE3_CPP{"inputFilesCPP/testFile3.cpp"};
@@ -20,6 +26,12 @@ const std::string TEST_FILE1_MODEL_CPP{"modelFilesCPP/testFile1Model.cpp"};
 const std::string TEST_FILE2_MODEL_CPP{"modelFilesCPP/testFile2Model.hpp"};
 const std::string TEST_FILE3_MODEL_CPP{"modelFilesCPP/testFile3Model.cpp"};
 const std::string TEST_FILE2_MODEL_PATCH_CPP{"modelFilesCPP/testFile2ModelPatch.hpp"};
+//Elixir
+const std::string TEST_FILE1_ELIXIR{"inputFilesElixir/testFile1.exs"};
+const std::string TEST_FILE1_MODEL_ELIXIR{"modelFilesElixir/testFile1Model.exs"};
+//Python
+const std::string TEST_FILE1_PYTHON{"inputFilesPython/testFile1.py"};
+const std::string TEST_FILE1_MODEL_PYTHON{"modelFilesPython/testFile1Model.py"};
 
 const std::string TEST_ROOT_DIR{"test"};
 const std::string TEST_EXEC_ROOT_DIR{"tmp"};

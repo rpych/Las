@@ -1,6 +1,7 @@
 #pragma once
 #include "../src/commands/ICommand.hpp"
 #include "../src/commands/ACommandWrapper.hpp"
+#include "../src/commands/restore/RestoreCommand.hpp"
 
 namespace las::test
 {
@@ -17,16 +18,15 @@ public:
     {
       return;
     }
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH);
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_APPLY);
+  osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_DIFF_STAGED, RestoreCommand::cmdStagedAreaBackup, common::RepoState::SAVE);
+  osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_DIFF, RestoreCommand::cmdWorkAreaBackup, common::RepoState::SAVE);
 
-    auto const& filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_HEAD_FILES)
-                                               : allFilenames;
+    auto const filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_HEAD_FILES)
+                                              : allFilenames;
     if (fileParser->parse(filenames))
     {
       fileWriter->write(fileParser->getFilesHunks());
     }
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_DROP);
   }
 };
 

@@ -2,6 +2,7 @@
 #include "../src/commands/ICommand.hpp"
 #include "../src/commands/ACommandWrapper.hpp"
 #include "testcases/Utils.hpp"
+#include "../src/commands/restore/RestoreCommand.hpp"
 
 namespace las::test
 {
@@ -10,7 +11,7 @@ class TestDiffStagedCommand: public ICommand, public ACommandWrapper
 {
 public:
   TestDiffStagedCommand(CommandParams& params): ACommandWrapper(params) {}
-  std::string GIT_CHECKOUT_STASH_WORK_AREA{"git checkout stash@{1}"};
+  std::string GIT_APPLY_WORK_AREA{std::format("git apply {} --include=", RestoreCommand::cmdWorkAreaBackup)};
   void runAlgorithm() override
   {
     std::cout<<"runAlgorithm for TEST  DIFF staged command"<<std::endl;
@@ -20,12 +21,13 @@ public:
       return;
     }
     auto const filenamesWorkArea(std::move(getAllFilenames(common::GitCmd::GIT_DIFF_FILES)));
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_PUSH_KEEP_INDEX);
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH);
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_APPLY);
+    osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_DIFF_STAGED, RestoreCommand::cmdStagedAreaBackup, common::RepoState::SAVE);
+    osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_DIFF, RestoreCommand::cmdWorkAreaBackup, common::RepoState::SAVE);
+    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_RESET_HARD);
+    osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_APPLY_INDEX, RestoreCommand::cmdStagedAreaBackup, common::RepoState::ROLLBACK);
 
-    auto const& filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_STAGED_FILES)
-                                               : getAllFilenames(common::GitCmd::GIT_DIFF_STAGED_FILES);
+    auto const filenames = (cmdLineFilenames) ? getFilteredFilenames(common::GitCmd::GIT_DIFF_STAGED_FILES)
+                                              : getAllFilenames(common::GitCmd::GIT_DIFF_STAGED_FILES);
     if (fileParser->parse(filenames))
     {
       fileWriter->write(fileParser->getFilesHunks());
@@ -33,14 +35,12 @@ public:
 
     for (auto const& f: filenamesWorkArea)
     {
-      std::string cmdForFile{std::format("{} {}", GIT_CHECKOUT_STASH_WORK_AREA, f)};
+      std::string cmdForFile{std::format("{}{}", GIT_APPLY_WORK_AREA, f)};
       if (std::find(filenames.begin(), filenames.end(), f) == filenames.end())
       {
         executeOsCommandWithoutResult(cmdForFile);
       }
     }
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_DROP_1);
-    osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_STASH_DROP);
   }
 };
 

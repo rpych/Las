@@ -31,7 +31,7 @@ bool LasTestBase::compareFilesContent(std::stringstream& testContent, std::strin
     if (lineTest != lineModel)
     {
       result = false;
-      std::cout<<"ERROR: lineTest:"<<lineTest<<", lineModel:"<<lineModel<<std::endl;
+      std::cout<<"ERROR: lineTest:"<<lineTest<<", lineModel:"<<lineModel<<", lineNum:"<<lineNum<<std::endl;
     }
     EXPECT_STREQ(lineTest.c_str(), lineModel.c_str());
     lineTest.clear();
@@ -214,7 +214,21 @@ LasTestParam{.argc=5, /*test with patch application*/
               .modelFilenames={TEST_FILE1_CPP, TEST_FILE2_MODEL_CPP, TEST_FILE3_MODEL_CPP},
               .setupCommands={joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE3_CPP),
                               joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE2_CPP),
-                              joinCmd("git apply", TEST_ROOT_DIR, PATCH_TEST_FILE2_CPP) }}
+                              joinCmd("git apply", TEST_ROOT_DIR, PATCH_TEST_FILE2_CPP) }},
+LasTestParam{.argc=3,
+             .inputCmd=joinCmdPaths("las diff", joinPath(TEST_EXEC_ROOT_DIR, TEST_FILE1_ELIXIR), ""),
+             .inputDirsToCopy={INPUT_TEST_FILES_DIR_ELIXIR},
+             .filenamesToCheck={TEST_FILE1_ELIXIR},
+             .modelFilenames={TEST_FILE1_MODEL_ELIXIR},
+             .setupCommands={}},
+LasTestParam{.argc=5,
+             .inputCmd=joinCmdPaths("las diff head", joinPath(TEST_EXEC_ROOT_DIR, TEST_FILE1_PYTHON),
+                                                     joinPath(TEST_EXEC_ROOT_DIR, TEST_FILE1_ELIXIR)),
+             .inputDirsToCopy={INPUT_TEST_FILES_DIR_PYTHON, INPUT_TEST_FILES_DIR_ELIXIR},
+             .filenamesToCheck={TEST_FILE1_ELIXIR, TEST_FILE1_PYTHON},
+             .modelFilenames={TEST_FILE1_MODEL_ELIXIR, TEST_FILE1_MODEL_PYTHON},
+             .setupCommands={joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE1_PYTHON),
+                             joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE1_ELIXIR)}}
 
 
 
@@ -339,7 +353,22 @@ INSTANTIATE_TEST_SUITE_P(LasTestWholeAppCPP, LasTestWholeApp, Values(
                 .setupCommands={joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE3_CPP),
                                 joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE2_CPP),
                                 joinCmd("git apply", TEST_ROOT_DIR, PATCH_TEST_FILE2_CPP) },
-                .isTestCmdExecutor=false}
+                .isTestCmdExecutor=false},
+  LasTestParam{.argc=3,
+               .inputCmd=joinCmdPaths("las diff", joinPath(TEST_EXEC_ROOT_DIR, TEST_FILE1_ELIXIR), ""),
+               .inputDirsToCopy={INPUT_TEST_FILES_DIR_ELIXIR},
+               .filenamesToCheck={TEST_FILE1_ELIXIR},
+               .modelFilenames={TEST_FILE1_ELIXIR},
+               .setupCommands={},
+               .isTestCmdExecutor=false},
+  LasTestParam{.argc=5,
+               .inputCmd=joinCmdPaths("las diff head", joinPath(TEST_EXEC_ROOT_DIR, TEST_FILE1_PYTHON),
+                                                       joinPath(TEST_EXEC_ROOT_DIR, TEST_FILE1_ELIXIR)),
+               .inputDirsToCopy={INPUT_TEST_FILES_DIR_PYTHON, INPUT_TEST_FILES_DIR_ELIXIR},
+               .filenamesToCheck={TEST_FILE1_ELIXIR, TEST_FILE1_PYTHON},
+               .modelFilenames={TEST_FILE1_ELIXIR, TEST_FILE1_PYTHON},
+               .setupCommands={joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE1_PYTHON),
+                               joinCmd("git add", TEST_EXEC_ROOT_DIR, TEST_FILE1_ELIXIR)}}
                
                
 ));

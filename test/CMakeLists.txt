@@ -22,13 +22,13 @@ target_compile_features(language_req_test INTERFACE cxx_std_20)
 
 target_link_libraries(las_test PUBLIC language_req_test)
 target_link_libraries(las_test PUBLIC las_lib)
-target_compile_definitions(las_test PUBLIC LAS_DEBUG)
 
 target_link_libraries(
   las_test
   PUBLIC
   GTest::gtest_main
 )
+target_compile_definitions(las_test PUBLIC LAS_DEBUG)
 
 include(GoogleTest)
 gtest_discover_tests(las_test)

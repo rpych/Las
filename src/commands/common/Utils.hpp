@@ -114,6 +114,10 @@ static std::map<Language, std::shared_ptr<LasLanguage>> predefineLanguages()
 {
   std::map<Language, std::shared_ptr<LasLanguage>> opts;
   opts.emplace(Language::CPP, std::make_shared<LasCpp>());
+  opts.emplace(Language::ELIXIR, std::make_shared<LasElixir>());
+  opts.emplace(Language::PYTHON, std::make_shared<LasPython>());
+  opts.emplace(Language::JAVA, std::make_shared<LasJava>());
+  opts.emplace(Language::DEFAULT, std::make_shared<LasDefault>());
   return opts;
 }
 
@@ -147,10 +151,30 @@ inline std::string const getParsedFileExtension(std::string_view filename)
 inline std::shared_ptr<LasLanguage> getLanguage(std::string_view filename)
 {
   auto const extension{getParsedFileExtension(filename)};
-  if (extension == "cpp" or extension == "hpp")
+  if (extension == "cpp" or extension == "hpp" or
+      extension == "h" or extension == "c")
   {
     return availableLanguages.at(Language::CPP);
   }
+  else if (extension == "ex" or extension == "exs")
+  {
+    std::cout<<"Elixir chosen"<<std::endl;
+    return availableLanguages.at(Language::ELIXIR);
+  }
+  else if (extension == "py")
+  {
+    return availableLanguages.at(Language::PYTHON);
+  }
+  else if (extension == "java")
+  {
+    return availableLanguages.at(Language::JAVA);
+  }
+  else if (extension == "txt" or extension == "json" or extension == "yaml" or
+           extension == "mt" or extension == ".sh")
+  {
+    return availableLanguages.at(Language::DEFAULT);
+  }
+  logLasError("Error::file: {} with unsupported extension!", filename);
   return std::shared_ptr<LasLanguage>();
 }
 

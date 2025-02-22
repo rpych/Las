@@ -14,7 +14,8 @@ namespace las::commands::common
 void saveCommandResult(char const* cmd, std::string& result)
 {
   std::array<char, 1024> line;
-  std::unique_ptr<FILE, decltype(&pclose)> cmdPipe(popen(cmd, "r"), pclose);
+  auto pcloseWrap = [](FILE* f) { return pclose(f); };
+  std::unique_ptr<FILE, decltype(pcloseWrap)> cmdPipe(popen(cmd, "r"), pcloseWrap);
   if (not cmdPipe) return;
   while (fgets(line.data(), line.size(), cmdPipe.get()) != nullptr)
   {
