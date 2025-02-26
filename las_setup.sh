@@ -9,12 +9,17 @@ fi
 
 echo -e "Setuping las tool inside ${HOME}"
 
-LAS_HOME_DIR=$HOME/.las
+LAS_HOME_DIR="$HOME/.las"
 echo -e "Las home directory: ${LAS_HOME_DIR}"
-mkdir -p ${LAS_HOME_DIR}
 
-LAS_APP_CONTENT="CMakeLists.txt Containerfile build_run_las.sh src test"
-cp -r ${LAS_APP_CONTENT} ${LAS_HOME_DIR}
+LAS_APP_CONTENT="CMakeLists.txt Containerfile las_setup.sh las.sh src test"
+if [ ! -d "$LAS_HOME_DIR" ]; then
+  mkdir -p ${LAS_HOME_DIR}
+  cp -r ${LAS_APP_CONTENT} ${LAS_HOME_DIR}
+else
+  echo -e "${LAS_HOME_DIR} already exists. No new files were created in that location!"
+fi
+
 cd ${LAS_HOME_DIR}
 
 LAS_IMAGE="las_app_image"
