@@ -73,7 +73,8 @@ void OSCommandProxy<T>::executeOsCommandNotSave(T command)
 
 template<typename T>
 void OSCommandProxy<T>::executeOsCommandNotSave(T command,
-                                                std::vector<std::string> const& files)
+                                                std::vector<std::string> const& files,
+                                                std::string const& outputFile)
 {
   namespace osUtils = las::commands::common;
   clearOsCommand();
@@ -84,8 +85,9 @@ void OSCommandProxy<T>::executeOsCommandNotSave(T command,
   }
   std::string const& s  = static_cast<std::string>(allowedOsCommands.at(command));
   auto const finalCmd{(s + filesCombined)};
-  char const* cmdPhrase = (finalCmd).c_str();
-  osUtils::executeCommand(cmdPhrase);
+  auto const finalCmdStored{(finalCmd + " > " + outputFile)};
+  osUtils::executeCommand(finalCmdStored.c_str());
+  osUtils::executeCommand(finalCmd.c_str());
 }
 
 template<typename T>

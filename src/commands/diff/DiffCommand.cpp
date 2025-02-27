@@ -25,7 +25,7 @@ void DiffCommand::runAlgorithm()
     fileWriter->write(fileParser->getFilesHunks());
   }
 
-  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF, filenames);
+  osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_DIFF, filenames, las::LasCmdOutputFile);
   osCommandProxy->executeOsCommandNotSave(common::GitCmd::GIT_RESET_HARD);
 
   osCommandProxy->executeOsCommandWithFile(common::GitCmd::GIT_APPLY_INDEX, RestoreCommand::cmdStagedAreaBackup, common::RepoState::ROLLBACK);

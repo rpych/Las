@@ -36,17 +36,17 @@ Las commands:\n
     e.g. las diff ; las diff file1 file2
     Create diff output from removed code/added substitution code marked with LAS tags
     in files from working area.
-    Command keeps files content untouched.\n
+    Command keeps files content untouched. Saves output also in las_output.diff file for reuse.\n
   - las diff head [filenames]
     e.g. las diff head ; las diff head file1 file2
     Create diff output from removed code/added substitution code marked with LAS tags
     in files from working and staging area.
-    Command keeps files content untouched.\n
+    Command keeps files content untouched. Saves output also in las_output.diff file for reuse.\n
   - las diff staged [filenames]
     e.g. las diff staged ; las diff staged file1 file2
     Create diff output from removed code/added substitution code marked with LAS tags
     in files from staging area.
-    Command keeps files content untouched.\n
+    Command keeps files content untouched. Saves output also in las_output.diff file for reuse.\n
   - las restore -n<number>
     e.g. las restore -n0 \n
     Command allows to restore state of repository as before executing given las command.
@@ -102,7 +102,7 @@ mkdir -p ".las_directory/areas" ".las_directory/backup"
 if podman inspect ${LAS_IMAGE} > /dev/null 2>&1; then
   podman run --rm --interactive --tty -v ${GIT_REPO_ROOT}:/run_las ${LAS_IMAGE} ${LAS_ARGS[@]}
 else
-  echo -e "Container for las app cannot be created.\nRun \"las_setup.sh\" from the downloaded las app directory"
+  echo -e "Container for las app cannot be created.\nRun \"las_setup.sh\" from the downloaded las app directory or $HOME/.las"
   exit 1
 fi
 

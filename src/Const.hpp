@@ -5,6 +5,7 @@
 namespace las
 {
 
+const inline std::string LasCmdOutputFile{"las_output.diff"};
 const inline std::string LasStateBackupDir{".las_directory/backup"};
 const inline std::string StagedAreaFilesBackup{".las_directory/areas/CmdStagedAreaBackup.diff"};
 const inline std::string WorkAreaFilesBackup{".las_directory/areas/CmdWorkAreaBackup.diff"};

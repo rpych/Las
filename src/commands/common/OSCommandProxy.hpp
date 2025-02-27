@@ -15,7 +15,8 @@ public:
   virtual std::string const& executeOsCommand(T command) = 0;
   virtual void executeOsCommandNotSave(T command) = 0;
   virtual void executeOsCommandNotSave(T command,
-                                       std::vector<std::string> const& files) = 0;
+                                       std::vector<std::string> const& files,
+                                       std::string const& outputFile) = 0;
   virtual void executeOsCommandWithFile(T command,
                                         std::string const& file,
                                         RepoState state) = 0;
@@ -30,7 +31,8 @@ public:
   std::string const& executeOsCommand(T command) override;
   void executeOsCommandNotSave(T command) override;
   virtual void executeOsCommandNotSave(T command,
-                                       std::vector<std::string> const& files) override;
+                                       std::vector<std::string> const& files,
+                                       std::string const& outputFile) override;
   virtual void executeOsCommandWithFile(T command,
                                         std::string const& file,
                                         RepoState state) override;
