@@ -61,6 +61,11 @@ Las commands:\n
     Command keeps files content untouched.\n "
 }
 
+if [[ "$1" == "--help" || "$1" == "-- help" || "$1" == "-h" ]]; then
+  print_help
+  exit 0
+fi
+
 if ! command -v podman &> /dev/null; then
   echo -e "Podman is not installed on the system"
   exit 1
@@ -76,11 +81,6 @@ GIT_REPO_NOT_EMPTY=$(git rev-parse HEAD &> /dev/null)
 if [ $? -ne 0 ]; then
   echo -e "GIT repository is empty. Please create first commit before use"
   exit 1
-fi
-
-if [[ "$1" == "--help" || "$1" == "-- help" || "$1" == "-h" ]]; then
-  print_help
-  exit 0
 fi
 
 #parse input files if exist
